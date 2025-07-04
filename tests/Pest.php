@@ -13,7 +13,6 @@ uses(TestCase::class)
         }
     });
 
-
 function getTempDir(): string
 {
     return __DIR__.'/temp';
