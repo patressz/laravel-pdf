@@ -139,8 +139,8 @@ final class PdfBuilder
 
         $possiblePaths = PHP_OS_FAMILY === 'Windows'
         ? [
-            getenv('ProgramFiles').'\\nodejs\\node.exe',
-            getenv('ProgramFiles(x86)').'\\nodejs\\node.exe',
+            getenv('ProgramFiles').DIRECTORY_SEPARATOR.'nodejs'.DIRECTORY_SEPARATOR.'node.exe',
+            getenv('ProgramFiles(x86)').DIRECTORY_SEPARATOR.'nodejs'.DIRECTORY_SEPARATOR.'node.exe',
         ]
         : [
             '/usr/local/bin/node',
