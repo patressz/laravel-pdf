@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Patressz\Skeleton;
+namespace Patressz\LaravelPdf;
 
 use Illuminate\Support\ServiceProvider;
 
-final class ExampleServiceProvider extends ServiceProvider
+final class PdfServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
