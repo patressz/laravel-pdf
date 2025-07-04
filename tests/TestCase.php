@@ -24,6 +24,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
     public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
+
+        $this->ensureDirectoryExists(storage_path('framework'));
+        $this->ensureDirectoryExists(storage_path('framework/views'));
     }
 
     /**
@@ -36,5 +39,15 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return [
             PdfServiceProvider::class,
         ];
+    }
+
+    /**
+     * Ensure directory exists.
+     */
+    protected function ensureDirectoryExists(string $path): void
+    {
+        if (! is_dir($path)) {
+            mkdir($path, 0755, true);
+        }
     }
 }
