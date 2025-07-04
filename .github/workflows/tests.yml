@@ -29,7 +29,7 @@ jobs:
       run: yarn install --prefer-offline --no-audit --progress=false
 
     - name: Install playwright browsers
-      run: yarn playwright install --with-deps
+      run: yarn playwright install chromium --with-deps
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
