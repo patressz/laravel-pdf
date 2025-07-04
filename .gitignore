@@ -9,3 +9,4 @@
 *.swp
 *.swo
 node_modules
+tests/temp

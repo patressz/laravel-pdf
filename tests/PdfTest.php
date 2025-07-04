@@ -17,10 +17,10 @@ it('can change format', function (string|Format $format) {
 
     expect($pdfBuilder->format)->toBe($format);
 })
-->with([
-    'A1',
-    Format::A5->value,
-]);
+    ->with([
+        'A1',
+        Format::A5->value,
+    ]);
 
 it('can change `nodeBinaryPath`', function () {
     $pdfBuilder = PdfBuilder::create()
@@ -32,5 +32,11 @@ it('can change `nodeBinaryPath`', function () {
 it('delete temporary files', function () {
     $pdfBuilder = PdfBuilder::create();
 
-    // expect($pdfBuilder->tmpDirectory->exists())->toBeFalse();
+    $pdfBuilder
+        ->view('layout')
+        ->save(getTempDir().'/test.pdf');
+
+    expect($pdfBuilder)
+        ->tmpDirectory->exists()->toBeFalse()
+        ->and(file_exists($pdfBuilder->tmpFile))->toBeFalse();
 });
