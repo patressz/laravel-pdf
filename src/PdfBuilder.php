@@ -108,7 +108,7 @@ final class PdfBuilder
 
         $process = Process::forever()
             ->env([
-                'PATH' => '$PATH:/usr/local/bin:/opt/homebrew/bin',
+                'PATH' => PHP_OS_FAMILY === 'Windows' ? getenv('PATH') : 'PATH:/usr/local/bin:/opt/homebrew/bin',
                 'NODE_PATH' => base_path().'/node_modules',
             ])
             ->run([
@@ -137,7 +137,12 @@ final class PdfBuilder
             return $this->nodeBinaryPath;
         }
 
-        $possiblePaths = [
+        $possiblePaths = PHP_OS_FAMILY === 'Windows'
+        ? [
+            getenv('ProgramFiles').'\\nodejs\\node.exe',
+            getenv('ProgramFiles(x86)').'\\nodejs\\node.exe',
+        ]
+        : [
             '/usr/local/bin/node',
             '/opt/homebrew/bin/node',
             '/usr/bin/node',
