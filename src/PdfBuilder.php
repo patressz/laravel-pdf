@@ -15,11 +15,6 @@ final class PdfBuilder
     private const string BINARY_PATH = __DIR__.'/../bin/playwright.cjs';
 
     /**
-     * The format of the PDF document.
-     */
-    public string $format = 'A4';
-
-    /**
      * The path to the Node.js binary.
      */
     public ?string $nodeBinaryPath = null;
@@ -33,6 +28,11 @@ final class PdfBuilder
      * Temporary file for storing the HTML content.
      */
     public ?string $tmpFile = null;
+
+    /**
+     * The format of the PDF document.
+     */
+    public string $format = 'A4';
 
     /**
      * The html content to convert to PDF.
@@ -106,6 +106,56 @@ final class PdfBuilder
      */
     public function save(string $outputPath): string
     {
+        $pdfContent = $this->callBinary();
+
+        $directory = dirname($outputPath);
+
+        if (! is_dir($directory)) {
+            if (! mkdir($directory, 0755, true)) {
+                throw new RuntimeException(sprintf('Failed to create directory [%s]', $directory));
+            }
+        }
+
+        if (! is_writable($directory)) {
+            throw new RuntimeException(sprintf('Directory [%s] is not writable', $directory));
+        }
+
+        $bytesWritten = file_put_contents($outputPath, $pdfContent);
+
+        if ($bytesWritten === false) {
+            throw new RuntimeException(sprintf('Failed to write PDF content to [%s]', $outputPath));
+        }
+
+        return $outputPath;
+    }
+
+    /*
+    * Generate the PDF and return its content as a base64-encoded string.
+    */
+    public function base64(): string
+    {
+        return $this->callBinary();
+    }
+
+    /**
+     * Generate the PDF and return its content as a raw binary string.
+     */
+    public function raw(): string
+    {
+        $decodedContent = base64_decode($this->callBinary(), true);
+
+        if ($decodedContent === false) {
+            throw new RuntimeException('Failed to decode base64 content.');
+        }
+
+        return $decodedContent;
+    }
+
+    /**
+     * Generate the PDF and return its content as a base64-encoded string.
+     */
+    private function callBinary(): string
+    {
         $this->createTemporaryFile();
 
         try {
@@ -119,14 +169,19 @@ final class PdfBuilder
                     self::BINARY_PATH,
                     "--format={$this->format}",
                     "--filePath={$this->tmpFile}",
-                    "--outputPath={$outputPath}",
                 ]);
 
             if ($process->failed()) {
                 throw new RuntimeException('Failed to generate PDF: '.$process->errorOutput());
             }
 
-            return $outputPath;
+            $base64 = $process->output();
+
+            if (blank($base64)) {
+                throw new RuntimeException('PDF generation failed: No output received.');
+            }
+
+            return $base64;
         } finally {
             $this->cleanupTemporaryFiles();
         }

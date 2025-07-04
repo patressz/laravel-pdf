@@ -35,11 +35,11 @@ function parseArgs() {
         waitUntil: 'networkidle'
     });
 
-    console.log(options.filePath);
-    await page.pdf({
-        path: options.outputPath,
+    const pdfBuffer = await page.pdf({
         format: options.format,
     });
 
     browser.close();
+
+    process.stdout.write(pdfBuffer.toString('base64'));
 })();
