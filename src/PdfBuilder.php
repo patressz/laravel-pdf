@@ -49,8 +49,8 @@ final class PdfBuilder
 
     /**
      * Pass the view name and data to render the HTML content.
-     * 
-     * @param array<mixed, mixed> $data
+     *
+     * @param  array<mixed, mixed>  $data
      */
     public function view(string $view, array $data = []): self
     {
@@ -108,26 +108,28 @@ final class PdfBuilder
     {
         $this->createTemporaryFile();
 
-        $process = Process::forever()
-            ->env([
-                'PATH' => PHP_OS_FAMILY === 'Windows' ? getenv('PATH') : 'PATH:/usr/local/bin:/opt/homebrew/bin',
-                'NODE_PATH' => base_path().'/node_modules',
-            ])
-            ->run([
-                $this->getNodeBinaryPath(),
-                self::BINARY_PATH,
-                "--format={$this->format}",
-                "--filePath={$this->tmpFile}",
-                "--outputPath={$outputPath}",
-            ]);
+        try {
+            $process = Process::timeout(60)
+                ->env([
+                    'PATH' => PHP_OS_FAMILY === 'Windows' ? getenv('PATH') : 'PATH:/usr/local/bin:/opt/homebrew/bin',
+                    'NODE_PATH' => base_path().'/node_modules',
+                ])
+                ->run([
+                    $this->getNodeBinaryPath(),
+                    self::BINARY_PATH,
+                    "--format={$this->format}",
+                    "--filePath={$this->tmpFile}",
+                    "--outputPath={$outputPath}",
+                ]);
 
-        if ($process->failed()) {
-            throw new RuntimeException('Failed to generate PDF: '.$process->errorOutput());
+            if ($process->failed()) {
+                throw new RuntimeException('Failed to generate PDF: '.$process->errorOutput());
+            }
+
+            return $outputPath;
+        } finally {
+            $this->cleanupTemporaryFiles();
         }
-
-        $this->cleanupTemporaryFiles();
-
-        return $outputPath;
     }
 
     /**
