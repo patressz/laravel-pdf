@@ -49,6 +49,8 @@ final class PdfBuilder
 
     /**
      * Pass the view name and data to render the HTML content.
+     * 
+     * @param array<mixed, mixed> $data
      */
     public function view(string $view, array $data = []): self
     {
