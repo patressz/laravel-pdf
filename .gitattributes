@@ -14,8 +14,8 @@ rector.php         export-ignore
 CHANGELOG.md       export-ignore
 CONTRIBUTING.md    export-ignore
 README.md          export-ignore
-workbench
-testbench.yaml
-package.json
-yarn.lock
-pint.json
+workbench          export-ignore
+testbench.yaml     export-ignore
+package.json       export-ignore
+yarn.lock          export-ignore
+pint.json          export-ignore
