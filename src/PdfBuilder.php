@@ -39,6 +39,8 @@ final class PdfBuilder implements Responsable
 
     /**
      * The headers to be included in the response.
+     *
+     * @var array<string, string>
      */
     public array $responseHeaders = [];
 
@@ -145,7 +147,7 @@ final class PdfBuilder implements Responsable
     /**
      * Set the response headers for downloading the PDF.
      */
-    public function download(?string $downloadFileName = 'document.pdf'): self
+    public function download(string $downloadFileName = 'document.pdf'): self
     {
         $this->downloadFileName ?: $this->name($downloadFileName);
 
@@ -194,14 +196,12 @@ final class PdfBuilder implements Responsable
 
     /**
      * Add custom headers to the response.
+     *
+     * @param  array<string, string>  $headers
      */
     public function addHeaders(array $headers): self
     {
         foreach ($headers as $key => $value) {
-            if (! is_string($key) || ! is_string($value)) {
-                throw new InvalidArgumentException('Headers must be an associative array with string keys and values.');
-            }
-
             $this->responseHeaders[$key] = $value;
         }
 
