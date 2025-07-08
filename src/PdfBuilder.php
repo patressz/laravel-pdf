@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Patressz\LaravelPdf;
 
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Patressz\LaravelPdf\Enums\Format;
 use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
-final class PdfBuilder
+final class PdfBuilder implements Responsable
 {
     private const string BINARY_PATH = __DIR__.'/../bin/playwright.cjs';
 
@@ -33,6 +36,16 @@ final class PdfBuilder
      * The format of the PDF document.
      */
     public string $format = 'A4';
+
+    /**
+     * The headers to be included in the response.
+     */
+    public array $responseHeaders = [];
+
+    /**
+     * The filename to be used when downloading the PDF.
+     */
+    public ?string $downloadFileName = null;
 
     /**
      * The html content to convert to PDF.
@@ -129,6 +142,21 @@ final class PdfBuilder
         return $outputPath;
     }
 
+    /**
+     * Set the response headers for downloading the PDF.
+     */
+    public function download(?string $downloadFileName = 'document.pdf'): self
+    {
+        $this->downloadFileName ?: $this->name($downloadFileName);
+
+        $this->addHeaders([
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$this->downloadFileName.'"',
+        ]);
+
+        return $this;
+    }
+
     /*
     * Generate the PDF and return its content as a base64-encoded string.
     */
@@ -149,6 +177,49 @@ final class PdfBuilder
         }
 
         return $decodedContent;
+    }
+
+    /**
+     * Set the filename to be used when downloading the PDF.
+     */
+    public function name(string $downloadFileName): self
+    {
+        $this->downloadFileName = Str::of($downloadFileName)
+            ->lower()
+            ->pipe(fn (string $name): string => Str::endsWith($name, 'pdf') ? $name : $name.'.pdf')
+            ->toString();
+
+        return $this;
+    }
+
+    /**
+     * Add custom headers to the response.
+     */
+    public function addHeaders(array $headers): self
+    {
+        foreach ($headers as $key => $value) {
+            if (! is_string($key) || ! is_string($value)) {
+                throw new InvalidArgumentException('Headers must be an associative array with string keys and values.');
+            }
+
+            $this->responseHeaders[$key] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Generate the PDF and return it as a response.
+     */
+    public function toResponse($request): Response
+    {
+        if (! array_key_exists('Content-Disposition', $this->responseHeaders)) {
+            $this->responseHeaders['Content-Disposition'] = 'inline; filename="document.pdf"';
+        }
+
+        $pdfContent = $this->raw();
+
+        return response($pdfContent, 200, $this->responseHeaders);
     }
 
     /**
