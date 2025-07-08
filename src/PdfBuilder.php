@@ -121,7 +121,7 @@ final class PdfBuilder implements Responsable
      */
     public function save(string $outputPath): string
     {
-        $pdfContent = $this->callBinary();
+        $pdfContent = $this->raw();
 
         $directory = dirname($outputPath);
 
