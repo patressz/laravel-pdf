@@ -60,7 +60,7 @@ jobs:
 
     - name: Install Composer dependencies
       run: |
-        composer require "illuminate/contracts:^${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+        composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
         composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist
 
     - name: Integration Tests
