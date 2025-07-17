@@ -42,8 +42,7 @@ function parseArgs() {
         
         const pdfBuffer = await page.pdf({
             ...options,
-            margin: margins,
-            preferCSSPageSize
+            margin: margins
         });
 
         process.stdout.write(pdfBuffer.toString("base64"));
