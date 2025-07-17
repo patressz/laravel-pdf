@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use InvalidArgumentException;
 use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
@@ -60,9 +61,19 @@ final class PdfBuilder implements Responsable
     public ?string $downloadFileName = null;
 
     /**
-     * The html content to convert to PDF.
+     * The HTML content to convert to PDF.
      */
-    private ?string $html = null;
+    public ?string $html = null;
+
+    /**
+     * The header template for the PDF.
+     */
+    public ?string $headerTemplate = null;
+
+    /**
+     * The footer template for the PDF.
+     */
+    public ?string $footerTemplate = null;
 
     /**
      * Create a new instance of the PdfBuilder.
@@ -75,13 +86,77 @@ final class PdfBuilder implements Responsable
     /**
      * Pass the view name and data to render the HTML content.
      *
+     * Note: The `html()` method always takes precedence over this method, regardless of call order.
+     *
      * @param  array<mixed, mixed>  $data
      */
     public function view(string $view, array $data = []): self
     {
-        $html = view($view, $data)->render();
+        if ($this->html === null) {
+            $html = view($view, $data)->render();
 
+            $this->html = $html;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the HTML content to convert to PDF.
+     *
+     * This method always takes precedence over view() method content, regardless of call order.
+     */
+    public function html(string $html): self
+    {
         $this->html = $html;
+
+        return $this;
+    }
+
+    /**
+     * Set the HTML content for the header template.
+     *
+     * HTML template for the print header. Should be valid HTML markup with following classes used to inject printing
+     * values into them:
+     * - `'date'` formatted print date
+     * - `'title'` document title
+     * - `'url'` document location
+     * - `'pageNumber'` current page number
+     * - `'totalPages'` total pages in the document
+     */
+    public function headerTemplate(string|View $template): self
+    {
+        if ($template instanceof View) {
+            $template = $template->render();
+        }
+
+        $this->headerTemplate = $template;
+
+        $this->options['headerTemplate'] = $template;
+
+        return $this;
+    }
+
+    /**
+     * Set the HTML content for the footer template.
+     *
+     * HTML template for the print footer. Should be valid HTML markup with following classes used to inject printing
+     * values into them:
+     * - `'date'` formatted print date
+     * - `'title'` document title
+     * - `'url'` document location
+     * - `'pageNumber'` current page number
+     * - `'totalPages'` total pages in the document
+     */
+    public function footerTemplate(string|View $template): self
+    {
+        if ($template instanceof View) {
+            $template = $template->render();
+        }
+
+        $this->footerTemplate = $template;
+
+        $this->options['footerTemplate'] = $template;
 
         return $this;
     }
