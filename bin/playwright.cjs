@@ -22,24 +22,37 @@ function parseArgs() {
  * Main function to run the Playwright script.
  */
 (async function main() {
-    const options = parseArgs();
+    const args = parseArgs();
+    const margins = args.margins ? JSON.parse(args.margins) : {};
+    const options = args.options ? JSON.parse(args.options) : {};
 
-    const browser = await chromium.launch();
+    let browser = null;
 
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    try {
+        browser = await chromium.launch();
+        
+        const context = await browser.newContext();
+        const page = await context.newPage();
+        
+        const htmlContent = fs.readFileSync(args.filePath, "utf-8");
+        
+        await page.setContent(htmlContent, {
+            waitUntil: "networkidle",
+        });
+        
+        const pdfBuffer = await page.pdf({
+            ...options,
+            margin: margins,
+            preferCSSPageSize
+        });
 
-    const htmlContent = fs.readFileSync(options.filePath, 'utf-8');
-
-    await page.setContent(htmlContent, {
-        waitUntil: 'networkidle'
-    });
-
-    const pdfBuffer = await page.pdf({
-        format: options.format,
-    });
-
-    browser.close();
-
-    process.stdout.write(pdfBuffer.toString('base64'));
+        process.stdout.write(pdfBuffer.toString("base64"));
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+        process.exit(1);
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
+    }
 })();

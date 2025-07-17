@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Patressz\LaravelPdf\Enums\Format;
+use Patressz\LaravelPdf\Enums\Unit;
 use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
@@ -33,9 +34,18 @@ final class PdfBuilder implements Responsable
     public ?string $tmpFile = null;
 
     /**
-     * The format of the PDF document.
+     * The options for the PDF generation.
+     *
+     * @var array<string, mixed>
      */
-    public string $format = 'A4';
+    public array $options = [];
+
+    /**
+     * The margins for the PDF document.
+     *
+     * @var array<string, float>
+     */
+    public array $margins = [];
 
     /**
      * The headers to be included in the response.
@@ -77,12 +87,16 @@ final class PdfBuilder implements Responsable
     }
 
     /**
-     * Set the format of the PDF document.
+     * Set the paper format of the PDF document.
+     *
+     * If set, this takes priority over
+     * [`width`](https://playwright.dev/docs/api/class-page#page-pdf-option-width) or
+     * [`height`](https://playwright.dev/docs/api/class-page#page-pdf-option-height) options. Defaults to 'Letter'.
      */
     public function format(string|Format $format): self
     {
         if ($format instanceof Format) {
-            $this->format = $format->value;
+            $this->options['format'] = mb_strtoupper($format->value);
 
             return $this;
         }
@@ -99,7 +113,208 @@ final class PdfBuilder implements Responsable
             ));
         }
 
-        $this->format = $format;
+        $this->options['format'] = $format;
+
+        return $this;
+    }
+
+    /**
+     * Set the width of the PDF document.
+     */
+    public function width(float $width, Unit|string $unit = Unit::Millimeter): self
+    {
+        if ($unit instanceof Unit) {
+            $unit = $unit->value;
+        }
+
+        $unit = mb_strtolower($unit);
+
+        $validUnits = collect(Unit::cases())->map(fn (Unit $case) => mb_strtolower($case->value));
+
+        if (! in_array($unit, $validUnits->toArray(), true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid unit [%s]. Expected one of: [%s]',
+                $unit,
+                $validUnits->implode(', ')
+            ));
+        }
+
+        $this->options['width'] = "{$width}{$unit}";
+
+        return $this;
+    }
+
+    /**
+     * Set the height of the PDF document.
+     */
+    public function height(float $height, Unit|string $unit = Unit::Millimeter): self
+    {
+        if ($unit instanceof Unit) {
+            $unit = $unit->value;
+        }
+
+        $unit = mb_strtolower($unit);
+
+        $validUnits = collect(Unit::cases())->map(fn (Unit $case) => mb_strtolower($case->value));
+
+        if (! in_array($unit, $validUnits->toArray(), true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid unit [%s]. Expected one of: [%s]',
+                $unit,
+                $validUnits->implode(', ')
+            ));
+        }
+
+        $this->options['height'] = "{$height}{$unit}";
+
+        return $this;
+    }
+
+    /**
+     * Set the PDF orientation to landscape.
+     *
+     * Paper orientation. Defaults to `false`.
+     */
+    public function landscape(): self
+    {
+        $this->options['landscape'] = true;
+
+        return $this;
+    }
+
+    /**
+     * Whether or not to embed the document outline into the PDF. Defaults to `false`.
+     */
+    public function outline(): self
+    {
+        $this->options['outline'] = true;
+
+        return $this;
+    }
+
+    /**
+     * Prefer CSS page size over the format option.
+     *
+     * Give any CSS `@page` size declared in the page priority over what is declared in
+     * [`width`](https://playwright.dev/docs/api/class-page#page-pdf-option-width) and
+     * [`height`](https://playwright.dev/docs/api/class-page#page-pdf-option-height) or
+     * [`format`](https://playwright.dev/docs/api/class-page#page-pdf-option-format) options. Defaults to `false`, which
+     * will scale the content to fit the paper size.
+     */
+    public function preferCSSPageSize(): self
+    {
+        $this->options['preferCSSPageSize'] = true;
+
+        return $this;
+    }
+
+    /**
+     * Set the margins for the PDF document.
+     *
+     * Paper margins, defaults to none.
+     */
+    public function margins(
+        float $top = 0,
+        float $right = 0,
+        float $bottom = 0,
+        float $left = 0,
+        Unit|string $unit = Unit::Millimeter,
+    ): self {
+        if ($unit instanceof Unit) {
+            $unit = $unit->value;
+        }
+
+        $unit = mb_strtolower($unit);
+
+        $validUnits = collect(Unit::cases())->map(fn (Unit $case) => mb_strtolower($case->value));
+
+        if (! in_array($unit, $validUnits->toArray(), true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid unit [%s]. Expected one of: [%s]',
+                $unit,
+                $validUnits->implode(', ')
+            ));
+        }
+
+        $this->margins = [
+            'top' => "{$top}{$unit}",
+            'right' => "{$right}{$unit}",
+            'bottom' => "{$bottom}{$unit}",
+            'left' => "{$left}{$unit}",
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Print background graphics. Defaults to `false`.
+     */
+    public function printBackground(): self
+    {
+        $this->options['printBackground'] = true;
+
+        return $this;
+    }
+
+    /**
+     * Display header and footer. Defaults to `false`.
+     */
+    public function displayHeaderFooter(): self
+    {
+        $this->options['displayHeaderFooter'] = true;
+
+        return $this;
+    }
+
+    /**
+     * Set the scale factor for the PDF rendering.
+     *
+     * Scale of the webpage rendering. Defaults to `1`. Scale amount must be between `0.1` and `2`.
+     */
+    public function scale(float $scale): self
+    {
+        if ($scale < 0.1 || $scale > 2) {
+            throw new InvalidArgumentException('Scale must be a positive number between 0.1 and 2.');
+        }
+
+        $this->options['scale'] = $scale;
+
+        return $this;
+    }
+
+    /**
+     * Whether or not to generate tagged (accessible) PDF. Defaults to `false`.
+     */
+    public function tagged(): self
+    {
+        $this->options['tagged'] = true;
+
+        return $this;
+    }
+
+    /**
+     * Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+     */
+    public function pageRanges(string $ranges): self
+    {
+        if (empty($ranges)) {
+            throw new InvalidArgumentException('Page ranges cannot be empty.');
+        }
+
+        $this->options['pageRanges'] = $ranges;
+
+        return $this;
+    }
+
+    /**
+     * Set the filename to be used when downloading the PDF.
+     */
+    public function name(string $downloadFileName): self
+    {
+        $this->downloadFileName = Str::of($downloadFileName)
+            ->lower()
+            ->pipe(fn (string $name): string => Str::endsWith($name, 'pdf') ? $name : $name.'.pdf')
+            ->toString();
 
         return $this;
     }
@@ -149,7 +364,9 @@ final class PdfBuilder implements Responsable
      */
     public function download(string $downloadFileName = 'document.pdf'): self
     {
-        $this->downloadFileName ?: $this->name($downloadFileName);
+        if (! $this->downloadFileName) {
+            $this->name($downloadFileName);
+        }
 
         $this->addHeaders([
             'Content-Type' => 'application/pdf',
@@ -159,9 +376,9 @@ final class PdfBuilder implements Responsable
         return $this;
     }
 
-    /*
-    * Generate the PDF and return its content as a base64-encoded string.
-    */
+    /**
+     * Generate the PDF and return its content as a base64-encoded string.
+     */
     public function base64(): string
     {
         return $this->callBinary();
@@ -179,19 +396,6 @@ final class PdfBuilder implements Responsable
         }
 
         return $decodedContent;
-    }
-
-    /**
-     * Set the filename to be used when downloading the PDF.
-     */
-    public function name(string $downloadFileName): self
-    {
-        $this->downloadFileName = Str::of($downloadFileName)
-            ->lower()
-            ->pipe(fn (string $name): string => Str::endsWith($name, 'pdf') ? $name : $name.'.pdf')
-            ->toString();
-
-        return $this;
     }
 
     /**
@@ -238,8 +442,9 @@ final class PdfBuilder implements Responsable
                 ->run([
                     $this->getNodeBinaryPath(),
                     self::BINARY_PATH,
-                    "--format={$this->format}",
                     "--filePath={$this->tmpFile}",
+                    '--margins='.json_encode($this->margins),
+                    '--options='.json_encode($this->options),
                 ]);
 
             if ($process->failed()) {
@@ -284,7 +489,8 @@ final class PdfBuilder implements Responsable
             }
         }
 
-        $process = Process::run(['which', 'node']);
+        $whichCommand = PHP_OS_FAMILY === 'Windows' ? ['where', 'node'] : ['which', 'node'];
+        $process = Process::run($whichCommand);
 
         if ($process->successful()) {
             return mb_trim($process->output());
