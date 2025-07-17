@@ -43,7 +43,7 @@ final class PdfBuilder implements Responsable
     /**
      * The margins for the PDF document.
      *
-     * @var array<string, float>
+     * @var array<string, string>
      */
     public array $margins = [];
 
