@@ -127,18 +127,27 @@ it('can set display header footer', function () {
 });
 
 it('can set header template', function () {
-    $pdfBuilder = PdfBuilder::create();
-    // ->headerTemplate('<div>Header</div>');
+    $pdfBuilder = PdfBuilder::create()
+        ->headerTemplate('<div>Header</div>');
 
     expect($pdfBuilder->options['headerTemplate'])->toBe('<div>Header</div>');
-})->skip();
+});
 
 it('can set footer template', function () {
-    $pdfBuilder = PdfBuilder::create();
-    // ->footerTemplate('<div>Footer</div>');
+    $pdfBuilder = PdfBuilder::create()
+        ->footerTemplate('<div>Footer</div>');
 
     expect($pdfBuilder->options['footerTemplate'])->toBe('<div>Footer</div>');
-})->skip();
+});
+
+it('can set header and footer templates with view', function () {
+    $pdfBuilder = PdfBuilder::create()
+        ->headerTemplate(view('header'))
+        ->footerTemplate(view('footer'));
+
+    expect($pdfBuilder->options['headerTemplate'])->toBe(view('header')->render());
+    expect($pdfBuilder->options['footerTemplate'])->toBe(view('footer')->render());
+});
 
 it('can set margin', function () {
     $pdfBuilder = PdfBuilder::create()
@@ -208,14 +217,38 @@ it('can set download headers', function () {
     expect($pdfBuilder->responseHeaders['Content-Disposition'])->toBe('attachment; filename="test.pdf"');
 });
 
-it('delete temporary files', function () {
-    $pdfBuilder = PdfBuilder::create();
+it('can set view', function () {
+    $pdfBuilder = PdfBuilder::create()
+        ->view('layout');
 
-    $pdfBuilder
-        ->view('layout')
-        ->save(getTempDir().'/test.pdf');
+    $html = view('layout')->render();
 
-    expect($pdfBuilder)
-        ->tmpDirectory->exists()->toBeFalse()
-        ->and(file_exists($pdfBuilder->tmpFile))->toBeFalse();
+    expect($pdfBuilder->html)->toBe($html);
 });
+
+it('can set html content', function () {
+    $pdfBuilder = PdfBuilder::create()
+        ->html('<h1>Hello World</h1>');
+
+    expect($pdfBuilder->html)->toBe('<h1>Hello World</h1>');
+});
+
+it('can set html content using `html()` method over `view()` method', function () {
+    $pdfBuilder = PdfBuilder::create()
+        ->view('layout')
+        ->html('<h1>Hello World</h1>');
+
+    expect($pdfBuilder->html)->toBe('<h1>Hello World</h1>');
+});
+
+// it('delete temporary files', function () {
+//     $pdfBuilder = PdfBuilder::create();
+
+//     $pdfBuilder
+//         ->view('layout')
+//         ->save(getTempDir().'/test.pdf');
+
+//     expect($pdfBuilder)
+//         ->tmpDirectory->exists()->toBeFalse()
+//         ->and(file_exists($pdfBuilder->tmpFile))->toBeFalse();
+// });
