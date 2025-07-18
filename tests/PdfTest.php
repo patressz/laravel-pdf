@@ -241,14 +241,18 @@ it('can set html content using `html()` method over `view()` method', function (
     expect($pdfBuilder->html)->toBe('<h1>Hello World</h1>');
 });
 
-// it('delete temporary files', function () {
-//     $pdfBuilder = PdfBuilder::create();
+it('delete temporary files', function () {
+    $pdfBuilder = PdfBuilder::create();
 
-//     $pdfBuilder
-//         ->view('layout')
-//         ->save(getTempDir().'/test.pdf');
+    $pdfBuilder
+        ->view('layout')
+        ->headerTemplate(view('header'))
+        ->footerTemplate(view('footer'))
+        ->save(getTempDir().'/test.pdf');
 
-//     expect($pdfBuilder)
-//         ->tmpDirectory->exists()->toBeFalse()
-//         ->and(file_exists($pdfBuilder->tmpFile))->toBeFalse();
-// });
+    expect($pdfBuilder)
+        ->tmpDirectory->exists()->toBeFalse()
+        ->and(file_exists($pdfBuilder->tmpFiles['document']))->toBeFalse()
+        ->and(file_exists($pdfBuilder->tmpFiles['header']))->toBeFalse()
+        ->and(file_exists($pdfBuilder->tmpFiles['footer']))->toBeFalse();
+});
