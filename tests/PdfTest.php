@@ -217,6 +217,14 @@ it('can set download headers', function () {
     expect($pdfBuilder->responseHeaders['Content-Disposition'])->toBe('attachment; filename="test.pdf"');
 });
 
+it('can set inline headers', function () {
+    $pdfBuilder = PdfBuilder::create()
+        ->inline('test.pdf');
+
+    expect($pdfBuilder->responseHeaders['Content-Type'])->toBe('application/pdf');
+    expect($pdfBuilder->responseHeaders['Content-Disposition'])->toBe('inline; filename="test.pdf"');
+});
+
 it('can set view', function () {
     $pdfBuilder = PdfBuilder::create()
         ->view('layout');

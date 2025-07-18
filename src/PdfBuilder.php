@@ -454,6 +454,23 @@ final class PdfBuilder implements Responsable
     }
 
     /**
+     * Set the response headers for inline PDF.
+     */
+    public function inline(string $downloadFileName = 'document.pdf'): self
+    {
+        if (! $this->downloadFileName) {
+            $this->name($downloadFileName);
+        }
+
+        $this->addHeaders([
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$this->downloadFileName.'"',
+        ]);
+
+        return $this;
+    }
+
+    /**
      * Generate the PDF and return its content as a base64-encoded string.
      */
     public function base64(): string
