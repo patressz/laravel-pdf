@@ -32,9 +32,9 @@ final class PdfBuilder implements Responsable
     /**
      * Temporary files for storing the HTML content.
      *
-     * @var array<string, string>|null
+     * @var array<string, string>
      */
-    public ?array $tmpFiles = [];
+    public array $tmpFiles = [];
 
     /**
      * The options for the PDF generation.
