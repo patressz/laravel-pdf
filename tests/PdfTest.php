@@ -130,14 +130,14 @@ it('can set header template', function () {
     $pdfBuilder = PdfBuilder::create()
         ->headerTemplate('<div>Header</div>');
 
-    expect($pdfBuilder->options['headerTemplate'])->toBe('<div>Header</div>');
+    expect($pdfBuilder->headerHtml)->toBe('<div>Header</div>');
 });
 
 it('can set footer template', function () {
     $pdfBuilder = PdfBuilder::create()
         ->footerTemplate('<div>Footer</div>');
 
-    expect($pdfBuilder->options['footerTemplate'])->toBe('<div>Footer</div>');
+    expect($pdfBuilder->footerHtml)->toBe('<div>Footer</div>');
 });
 
 it('can set header and footer templates with view', function () {
@@ -145,8 +145,8 @@ it('can set header and footer templates with view', function () {
         ->headerTemplate(view('header'))
         ->footerTemplate(view('footer'));
 
-    expect($pdfBuilder->options['headerTemplate'])->toBe(view('header')->render());
-    expect($pdfBuilder->options['footerTemplate'])->toBe(view('footer')->render());
+    expect($pdfBuilder->headerHtml)->toBe(view('header')->render());
+    expect($pdfBuilder->footerHtml)->toBe(view('footer')->render());
 });
 
 it('can set margin', function () {
