@@ -42,6 +42,13 @@
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Patressz\\LaravelPdf\\PdfServiceProvider"
+            ]
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
