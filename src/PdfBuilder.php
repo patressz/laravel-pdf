@@ -30,9 +30,11 @@ final class PdfBuilder implements Responsable
     public ?TemporaryDirectory $tmpDirectory = null;
 
     /**
-     * Temporary file for storing the HTML content.
+     * Temporary files for storing the HTML content.
+     *
+     * @var array<string, string>|null
      */
-    public ?string $tmpFile = null;
+    public ?array $tmpFiles = [];
 
     /**
      * The options for the PDF generation.
@@ -66,14 +68,14 @@ final class PdfBuilder implements Responsable
     public ?string $html = null;
 
     /**
-     * The header template for the PDF.
+     * The header HTML for the PDF.
      */
-    public ?string $headerTemplate = null;
+    public ?string $headerHtml = null;
 
     /**
-     * The footer template for the PDF.
+     * The footer HTML for the PDF.
      */
-    public ?string $footerTemplate = null;
+    public ?string $footerHtml = null;
 
     /**
      * Create a new instance of the PdfBuilder.
@@ -126,13 +128,13 @@ final class PdfBuilder implements Responsable
      */
     public function headerTemplate(string|View $template): self
     {
+        $this->displayHeaderFooter();
+
         if ($template instanceof View) {
             $template = $template->render();
         }
 
-        $this->headerTemplate = $template;
-
-        $this->options['headerTemplate'] = $template;
+        $this->headerHtml = $template;
 
         return $this;
     }
@@ -150,13 +152,13 @@ final class PdfBuilder implements Responsable
      */
     public function footerTemplate(string|View $template): self
     {
+        $this->displayHeaderFooter();
+
         if ($template instanceof View) {
             $template = $template->render();
         }
 
-        $this->footerTemplate = $template;
-
-        $this->options['footerTemplate'] = $template;
+        $this->footerHtml = $template;
 
         return $this;
     }
@@ -509,18 +511,28 @@ final class PdfBuilder implements Responsable
         $this->createTemporaryFile();
 
         try {
+            $args = [
+                $this->getNodeBinaryPath(),
+                self::BINARY_PATH,
+                "--filePath={$this->tmpFiles['document']}",
+                '--margins='.json_encode($this->margins),
+                '--options='.json_encode($this->options),
+            ];
+
+            if (array_key_exists('header', $this->tmpFiles)) {
+                $args[] = "--headerFilePath={$this->tmpFiles['header']}";
+            }
+
+            if (array_key_exists('footer', $this->tmpFiles)) {
+                $args[] = "--footerFilePath={$this->tmpFiles['footer']}";
+            }
+
             $process = Process::timeout(60)
                 ->env([
                     'PATH' => PHP_OS_FAMILY === 'Windows' ? getenv('PATH') : 'PATH:/usr/local/bin:/opt/homebrew/bin',
                     'NODE_PATH' => base_path().'/node_modules',
                 ])
-                ->run([
-                    $this->getNodeBinaryPath(),
-                    self::BINARY_PATH,
-                    "--filePath={$this->tmpFile}",
-                    '--margins='.json_encode($this->margins),
-                    '--options='.json_encode($this->options),
-                ]);
+                ->run($args);
 
             if ($process->failed()) {
                 throw new RuntimeException('Failed to generate PDF: '.$process->errorOutput());
@@ -581,9 +593,21 @@ final class PdfBuilder implements Responsable
     {
         $this->tmpDirectory = TemporaryDirectory::make()->name('laravel-pdf-'.uniqid());
 
-        $this->tmpFile = $this->tmpDirectory->path('document.html');
+        $this->tmpFiles['document'] = $this->tmpDirectory->path('document.html');
 
-        file_put_contents($this->tmpFile, $this->html);
+        file_put_contents($this->tmpFiles['document'], $this->html);
+
+        if ($this->headerHtml !== null) {
+            $this->tmpFiles['header'] = $this->tmpDirectory->path('header.html');
+
+            file_put_contents($this->tmpFiles['header'], $this->headerHtml);
+        }
+
+        if ($this->footerHtml !== null) {
+            $this->tmpFiles['footer'] = $this->tmpDirectory->path('footer.html');
+
+            file_put_contents($this->tmpFiles['footer'], $this->footerHtml);
+        }
     }
 
     /**

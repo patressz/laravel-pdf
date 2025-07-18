@@ -35,14 +35,30 @@ function parseArgs() {
         const page = await context.newPage();
         
         const htmlContent = fs.readFileSync(args.filePath, "utf-8");
-        
+
+        let headerFilePath = null,
+            footerFilePath = null;
+
+        if (args.headerFilePath) {
+            headerFilePath = fs.readFileSync(args.headerFilePath, "utf-8");
+
+            options.headerTemplate = headerFilePath;
+        }
+
+        if (args.footerFilePath) {
+            footerFilePath = fs.readFileSync(args.footerFilePath, "utf-8");
+
+            options.footerTemplate = footerFilePath;
+        }
+
         await page.setContent(htmlContent, {
             waitUntil: "networkidle",
         });
         
         const pdfBuffer = await page.pdf({
             ...options,
-            margin: margins
+            margin: margins,
+            displayHeaderFooter: true,
         });
 
         process.stdout.write(pdfBuffer.toString("base64"));
