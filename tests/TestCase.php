@@ -17,6 +17,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
+        config()->set('view.compiled', storage_path('framework/views'));
     }
 
     /**
