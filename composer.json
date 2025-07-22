@@ -74,7 +74,6 @@
             "@test:refactor"
         ],
         "post-autoload-dump": [
-            "@clear",
             "@prepare"
         ],
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
