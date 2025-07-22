@@ -27,7 +27,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->ensureDirectoryExists(storage_path('framework'));
         $this->ensureDirectoryExists(storage_path('framework/views'));
-        $this->ensureDirectoryExists(storage_path('framework/cache'));
+        $this->ensureDirectoryExists(storage_path('framework/cache/data'));
     }
 
     /**
