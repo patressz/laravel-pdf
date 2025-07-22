@@ -10,13 +10,6 @@ use Patressz\LaravelPdf\PdfServiceProvider;
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     use WithWorkbench;
-    /**
-     * Setup the test environment.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
     /**
      * Define environment setup.
@@ -24,8 +17,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
     public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
-
-        config()->set('view.cache', false);
     }
 
     /**
@@ -38,15 +29,5 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return [
             PdfServiceProvider::class,
         ];
-    }
-
-    /**
-     * Ensure directory exists.
-     */
-    protected function ensureDirectoryExists(string $path): void
-    {
-        if (! is_dir($path)) {
-            mkdir($path, 0755, true);
-        }
     }
 }
