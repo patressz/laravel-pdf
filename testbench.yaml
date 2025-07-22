@@ -1,7 +1,7 @@
 laravel: './workbench'
 
 providers:
-  # - Workbench\App\Providers\WorkbenchServiceProvider
+  - Patressz\LaravelPdf\PdfServiceProvider
 
 migrations:
   - workbench/database/migrations
@@ -19,7 +19,7 @@ workbench:
     commands: true
     components: false
     factories: true
-    views: false
+    views: true
   build:
     - asset-publish
     - create-sqlite-db
