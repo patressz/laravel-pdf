@@ -22,7 +22,7 @@ final class PdfServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerBladeDirectives();
+        // $this->registerBladeDirectives();
     }
 
     /**
