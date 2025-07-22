@@ -6,7 +6,19 @@ use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\PdfBuilder;
 use Illuminate\Filesystem\Filesystem;
 use Patressz\LaravelPdf\Enums\Format;
-use function Orchestra\Sidekick\join_paths;
+
+function join_paths(?string $basePath, string ...$paths): string
+{
+    foreach ($paths as $index => $path) {
+        if (empty($path) && $path !== '0') {
+            unset($paths[$index]);
+        } else {
+            $paths[$index] = DIRECTORY_SEPARATOR.ltrim($path, DIRECTORY_SEPARATOR);
+        }
+    }
+
+    return $basePath.implode('', $paths);
+}
 
 it('debug', function () {
     $path = storage_path('framework'.DIRECTORY_SEPARATOR.'views');
