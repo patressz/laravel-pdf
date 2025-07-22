@@ -11,8 +11,9 @@ it('debug', function () {
     echo "Debugging PDF Builder tests...\n";
     echo $path . "\n";
     echo is_dir($path) ? 'Views directory exists.' : 'Views directory does not exist.';
-    $storagePath = storage_path();
-    shell_exec("ls -lha $storagePath");
+    $storagePath = storage_path('framework');
+    $output = shell_exec("ls -lha $storagePath");
+    echo $output;
     echo "\n";
     echo is_writable($path) ? 'Views directory is writable.' : 'Views directory is not writable.';
     echo "\n";
