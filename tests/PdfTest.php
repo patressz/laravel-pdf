@@ -7,6 +7,7 @@ use Patressz\LaravelPdf\PdfBuilder;
 use Illuminate\Filesystem\Filesystem;
 use Patressz\LaravelPdf\Enums\Format;
 use Illuminate\Support\LazyCollection;
+use Orchestra\Testbench\Foundation\Config;
 
 function join_paths(?string $basePath, string ...$paths): string
 {
@@ -33,15 +34,7 @@ it('debug', function () {
     echo is_writable($path) ? 'Views directory is writable.' : 'Views directory is not writable.';
     echo "\n";
     echo "\n";
-    $paths = LazyCollection::make(function () {
-        yield app()->databasePath('database.sqlite');
-        yield (new Filesystem)->glob(app()->basePath(join_paths('routes', 'testbench-*.php')));
-        yield (new Filesystem)->glob(app()->storagePath(join_paths('app', 'public', '*')));
-        yield (new Filesystem)->glob(app()->storagePath(join_paths('app', '*')));
-        yield (new Filesystem)->glob(app()->storagePath(join_paths('framework', 'sessions', '*')));
-    })
-        ->flatten()
-        ->toJson(JSON_PRETTY_PRINT);
+    $paths = json_encode(['files' => $files, 'directories' => $directories] = (new Config)->getPurgeAttributes());
     echo $paths;
     echo "\n";
     echo "\n";
