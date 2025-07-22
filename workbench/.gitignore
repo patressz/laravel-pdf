@@ -27,3 +27,6 @@ rector.php
 phpstan.neon
 composer.json
 composer.lock
+
+/workbench/storage/framework/views/*
+!/workbench/storage/framework/views/.gitignore
