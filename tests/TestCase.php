@@ -25,8 +25,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         config()->set('database.default', 'testing');
 
-        config()->set('cache.default', 'array');
-        config()->set('view.compiled', storage_path('framework/views'));
+        config()->set('view.cache', false);
     }
 
     /**
