@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Patressz\LaravelPdf;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,7 +23,9 @@ final class PdfServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // $this->registerBladeDirectives();
+        File::ensureDirectoryExists(storage_path('framework/views'));
+        
+        $this->registerBladeDirectives();
     }
 
     /**
