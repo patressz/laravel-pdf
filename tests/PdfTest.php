@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\PdfBuilder;
+use Illuminate\Filesystem\Filesystem;
+use Patressz\LaravelPdf\Enums\Format;
+use function Orchestra\Sidekick\join_paths;
 
 it('debug', function () {
     $path = storage_path('framework'.DIRECTORY_SEPARATOR.'views');
@@ -16,6 +18,11 @@ it('debug', function () {
     echo $output;
     echo "\n";
     echo is_writable($path) ? 'Views directory is writable.' : 'Views directory is not writable.';
+    echo "\n";
+    echo "\n";
+    $paths = (new Filesystem)->glob(app()->storagePath(join_paths('framework', 'sessions', '*')));
+    echo implode("\n", $paths);
+    echo "\n";
     echo "\n";
     expect(is_dir($path))->toBeTrue();
     expect(is_writable($path))->toBeTrue();
