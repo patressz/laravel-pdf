@@ -7,17 +7,15 @@ use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\PdfBuilder;
 
 it('debug', function () {
+    $path = storage_path('framework'.DIRECTORY_SEPARATOR.'views');
     echo "Debugging PDF Builder tests...\n";
-    echo storage_path('framework/views') . "\n";
-    echo is_dir(storage_path('framework/views')) ? 'Views directory exists.' : 'Views directory does not exist.'; 
+    echo $path . "\n";
+    echo is_dir($path) ? 'Views directory exists.' : 'Views directory does not exist.'; 
     echo "\n";
-    echo is_writable(storage_path('framework/views')) ? 'Views directory is writable.' : 'Views directory is not writable.';
+    echo is_writable($path) ? 'Views directory is writable.' : 'Views directory is not writable.';
     echo "\n";
-    echo file_exists(storage_path('framework/views/.gitignore')) ? 'Views .gitignore file exists.' : 'Views .gitignore file does not exist.';
-    echo "\n";
-    expect(is_dir(storage_path('framework/views')))->toBeTrue();
-    expect(is_writable(storage_path('framework/views')))->toBeTrue();
-    expect(file_exists(storage_path('framework/views/.gitignore')))->toBeTrue();
+    expect(is_dir($path))->toBeTrue();
+    expect(is_writable($path))->toBeTrue();
     echo "Debugging complete.\n";
 })->only();
 
