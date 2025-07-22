@@ -11,7 +11,7 @@ it('debug', function () {
     echo "Debugging PDF Builder tests...\n";
     echo $path . "\n";
     echo is_dir($path) ? 'Views directory exists.' : 'Views directory does not exist.';
-    $storagePath = storage_path('framework');
+    $storagePath = base_path();
     $output = shell_exec("ls -lha $storagePath");
     echo $output;
     echo "\n";
