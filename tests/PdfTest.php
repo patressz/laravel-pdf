@@ -256,11 +256,48 @@ it('delete temporary files', function () {
         ->view('layout')
         ->headerTemplate(view('header'))
         ->footerTemplate(view('footer'))
-        ->save(getTempDir().'/test.pdf');
+        ->save(getTempDir('test.pdf'));
 
     expect($pdfBuilder)
         ->tmpDirectory->exists()->toBeFalse()
         ->and(file_exists($pdfBuilder->tmpFiles['document']))->toBeFalse()
         ->and(file_exists($pdfBuilder->tmpFiles['header']))->toBeFalse()
         ->and(file_exists($pdfBuilder->tmpFiles['footer']))->toBeFalse();
+});
+
+it('can save PDF file with correct format', function () {
+    $path = PdfBuilder::create()
+        ->view('layout')
+        ->format(Format::A2)
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile()
+        ->toHaveDimensions(1587, 2246);
+});
+
+it('can save PDF file with correct format using `width()` and `height()` method', function () {
+    $path = PdfBuilder::create()
+        ->view('layout')
+        ->width(1587, Unit::Pixel)
+        ->height(2246, Unit::Pixel)
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile()
+        ->toHaveDimensions(1587, 2246);
+});
+
+it('can save PDF file with landscape orientation', function () {
+    $path = PdfBuilder::create()
+        ->view('layout')
+        ->landscape()
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile()
+        ->toHaveDimensions(1054, 816);
 });
