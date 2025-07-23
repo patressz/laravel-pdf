@@ -9,6 +9,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 **Initial release**
 
-## [Unreleased]
-
-- Adds first version
+- Initial release supporting generating an PDF using playwright with chromium
