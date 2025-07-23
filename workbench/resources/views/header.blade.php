@@ -38,6 +38,8 @@
         <h1>Sample PDF Document</h1>
         <p>This is a test document to demonstrate the Laravel PDF package functionality.</p>
         <p>Generated on: {{ date('Y-m-d H:i:s') }}</p>
+
+        @pageNumber of @totalPages
         
         <h2>Features Tested</h2>
         <ul>

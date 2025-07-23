@@ -6,19 +6,6 @@ use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\PdfBuilder;
 
-it('debug', function () {
-    $path = storage_path('framework'.DIRECTORY_SEPARATOR.'views');
-    echo "Debugging PDF Builder tests...\n";
-    echo $path . "\n";
-    echo is_dir($path) ? 'Views directory exists.' : 'Views directory does not exist.'; 
-    echo "\n";
-    echo is_writable($path) ? 'Views directory is writable.' : 'Views directory is not writable.';
-    echo "\n";
-    expect(is_dir($path))->toBeTrue();
-    expect(is_writable($path))->toBeTrue();
-    echo "Debugging complete.\n";
-})->only();
-
 it('can instantiate the PdfBuilder', function () {
     $pdfBuilder = PdfBuilder::create();
 
@@ -269,11 +256,48 @@ it('delete temporary files', function () {
         ->view('layout')
         ->headerTemplate(view('header'))
         ->footerTemplate(view('footer'))
-        ->save(getTempDir().'/test.pdf');
+        ->save(getTempDir('test.pdf'));
 
     expect($pdfBuilder)
         ->tmpDirectory->exists()->toBeFalse()
         ->and(file_exists($pdfBuilder->tmpFiles['document']))->toBeFalse()
         ->and(file_exists($pdfBuilder->tmpFiles['header']))->toBeFalse()
         ->and(file_exists($pdfBuilder->tmpFiles['footer']))->toBeFalse();
+});
+
+it('can save PDF file with correct format', function () {
+    $path = PdfBuilder::create()
+        ->view('layout')
+        ->format(Format::A2)
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile()
+        ->toHaveDimensions(1587, 2246);
+});
+
+it('can save PDF file with correct format using `width()` and `height()` method', function () {
+    $path = PdfBuilder::create()
+        ->view('layout')
+        ->width(1587, Unit::Pixel)
+        ->height(2246, Unit::Pixel)
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile()
+        ->toHaveDimensions(1587, 2246);
+});
+
+it('can save PDF file with landscape orientation', function () {
+    $path = PdfBuilder::create()
+        ->view('layout')
+        ->landscape()
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile()
+        ->toHaveDimensions(1054, 816);
 });
