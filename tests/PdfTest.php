@@ -2,46 +2,9 @@
 
 declare(strict_types=1);
 
+use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\PdfBuilder;
-use Illuminate\Filesystem\Filesystem;
-use Patressz\LaravelPdf\Enums\Format;
-use Illuminate\Support\LazyCollection;
-use Orchestra\Testbench\Foundation\Config;
-
-function join_paths(?string $basePath, string ...$paths): string
-{
-    foreach ($paths as $index => $path) {
-        if (empty($path) && $path !== '0') {
-            unset($paths[$index]);
-        } else {
-            $paths[$index] = DIRECTORY_SEPARATOR.ltrim($path, DIRECTORY_SEPARATOR);
-        }
-    }
-
-    return $basePath.implode('', $paths);
-}
-
-it('debug', function () {
-    $path = storage_path('framework'.DIRECTORY_SEPARATOR.'views');
-    echo "Debugging PDF Builder tests...\n";
-    echo $path . "\n";
-    echo is_dir($path) ? 'Views directory exists.' : 'Views directory does not exist.';
-    $storagePath = base_path();
-    $output = shell_exec("ls -lha $storagePath");
-    echo $output;
-    echo "\n";
-    echo is_writable($path) ? 'Views directory is writable.' : 'Views directory is not writable.';
-    echo "\n";
-    echo "\n";
-    $paths = json_encode(['files' => $files, 'directories' => $directories] = (new Config)->getPurgeAttributes());
-    echo $paths;
-    echo "\n";
-    echo "\n";
-    expect(is_dir($path))->toBeTrue();
-    expect(is_writable($path))->toBeTrue();
-    echo "Debugging complete.\n";
-})->only();
 
 it('can instantiate the PdfBuilder', function () {
     $pdfBuilder = PdfBuilder::create();
