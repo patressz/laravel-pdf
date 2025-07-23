@@ -44,8 +44,17 @@ jobs:
         extensions: dom, mbstring, zip, fileinfo, imagick
         coverage: none
 
-    - name: Install ghostscript
+    - name: Install ghostscript (Linux)
+      if: runner.os == 'Linux'
       run: sudo apt-get -y install ghostscript
+
+    - name: Install ghostscript (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ghostscript
+
+    - name: Install ghostscript (Windows)
+      if: runner.os == 'Windows'
+      run: choco install ghostscript
 
     - name: Get Composer cache directory
       id: composer-cache
