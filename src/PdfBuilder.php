@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
 use InvalidArgumentException;
 use Patressz\LaravelPdf\Enums\Format;
@@ -18,7 +19,7 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class PdfBuilder implements Responsable
 {
-    use Conditionable;
+    use Conditionable, Macroable;
 
     private const string BINARY_PATH = __DIR__.'/../bin/playwright.cjs';
 

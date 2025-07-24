@@ -21,6 +21,7 @@ A modern PHP package for generating PDFs from HTML using Playwright in Laravel a
 - 📥 Direct download response
 - 🔧 Configurable Node.js binary path
 - ✂️ Convenient Blade directives for page breaks and numbering
+- 🧩 Extensible with custom macros and conditional methods
 
 ## Requirements
 
@@ -458,6 +459,28 @@ $pdf = Pdf::view('document', $data)
 - `when($condition, $callback, $default = null)` - Execute callback when condition is true
 - `unless($condition, $callback, $default = null)` - Execute callback when condition is false
 
+## Custom macros
+
+The `PdfBuilder` class includes Laravel's `Macroable` trait, allowing you to extend its functionality with custom methods. Both the real `PdfBuilder` and the `FakePdfBuilder` (used in testing) support macros:
+
+```php
+use Patressz\LaravelPdf\Facades\Pdf;
+
+// Define a custom macro in a service provider using the facade
+Pdf::macro('invoice', function (Invoice $invoice) {
+    return $this->view('pdf.invoice', compact('invoice'))
+        ->format('A4')
+        ->margins(20, 15, 20, 15)
+        ->headerTemplate(view('pdf.invoice-header', compact('invoice')))
+        ->footerTemplate(view('pdf.invoice-footer'));
+});
+
+// Use the macro
+$pdf = Pdf::invoice($invoice)->download("invoice-{$invoice->number}.pdf");
+```
+
+**Note:** Macros can be defined using either `Pdf::macro()` facade method or directly on the `PdfBuilder` class. Both approaches make the macros available through the `Pdf` facade and work seamlessly with both production code and testing (when using `Pdf::fake()`).
+
 ## Troubleshooting
 
 ### Node.js not found
@@ -567,6 +590,17 @@ Pdf::view('document')
 | `name()` | `string $filename` | Set download filename |
 | `setNodeBinaryPath()` | `string $path` | Set custom Node.js binary path |
 | `addHeaders()` | `array $headers` | Add custom response headers |
+
+### Extension methods
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `when()` | `mixed $condition, callable $callback, callable\|null $default` | Execute callback when condition is true |
+| `unless()` | `mixed $condition, callable $callback, callable\|null $default` | Execute callback when condition is false |
+| `macro()` | `string $name, callable $macro` | **Static method** - Register a custom macro |
+| `mixin()` | `object $mixin, bool $replace = true` | **Static method** - Mix another object into the class |
+| `hasMacro()` | `string $name` | **Static method** - Check if macro exists |
+| `flushMacros()` | - | **Static method** - Remove all macros |
 
 ### Blade directives
 
