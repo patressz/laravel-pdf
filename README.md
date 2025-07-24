@@ -58,17 +58,15 @@ npx playwright install chromium --with-deps
 ### Basic PDF Generation
 
 ```php
-use Patressz\LaravelPdf\PdfBuilder;
+use Patressz\LaravelPdf\Facades\Pdf;
 
 // Generate PDF from Blade view
-$pdf = PdfBuilder::create()
-    ->view('invoice', ['user' => $user])
+$pdf = Pdf::view('invoice', ['user' => $user])
     ->format('A4')
     ->save('invoice.pdf');
 
 // Generate PDF from raw HTML
-$pdf = PdfBuilder::create()
-    ->html('<h1>Hello World</h1><p>This is a PDF.</p>')
+$pdf = Pdf::html('<h1>Hello World</h1><p>This is a PDF.</p>')
     ->format('A4')
     ->save('document.pdf');
 ```
@@ -77,8 +75,7 @@ $pdf = PdfBuilder::create()
 
 ```php
 // Direct download
-return PdfBuilder::create()
-    ->view('invoice', ['user' => $user])
+return Pdf::view('invoice', ['user' => $user])
     ->format('A4')
     ->download('invoice.pdf');
 ```
@@ -87,8 +84,7 @@ return PdfBuilder::create()
 
 ```php
 // Display in browser
-return PdfBuilder::create()
-    ->view('invoice', ['user' => $user])
+return Pdf::view('invoice', ['user' => $user])
     ->format('A4')
     ->inline('invoice.pdf');
 ```
@@ -97,8 +93,7 @@ return PdfBuilder::create()
 
 ```php
 // Get PDF as base64 string
-$base64 = PdfBuilder::create()
-    ->view('invoice', ['user' => $user])
+$base64 = Pdf::view('invoice', ['user' => $user])
     ->format('A4')
     ->base64();
 ```
@@ -107,8 +102,7 @@ $base64 = PdfBuilder::create()
 
 ```php
 // Get PDF as binary string
-$binaryPdf = PdfBuilder::create()
-    ->view('invoice', ['user' => $user])
+$binaryPdf = Pdf::view('invoice', ['user' => $user])
     ->format('A4')
     ->raw();
 ```
@@ -120,17 +114,16 @@ $binaryPdf = PdfBuilder::create()
 ```php
 use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
+use Patressz\LaravelPdf\Facades\Pdf;
 
 // Set custom width and height
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->width(210, Unit::Millimeter)  // or ->width(210, 'mm')
     ->height(297, Unit::Millimeter) // or ->height(297, 'mm')
     ->save('document.pdf');
 
 // Set landscape orientation
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->format(Format::A4)
     ->landscape()
     ->save('document.pdf');
@@ -140,14 +133,12 @@ $pdf = PdfBuilder::create()
 
 ```php
 // Set margins (top, right, bottom, left)
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->margins(20, 15, 20, 15, Unit::Millimeter)  // All sides
     ->save('document.pdf');
 
 // Available units: mm, cm, in, px
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->margins(0.8, 0.6, 0.8, 0.6, Unit::Inch)
     ->save('document.pdf');
 ```
@@ -156,20 +147,17 @@ $pdf = PdfBuilder::create()
 
 ```php
 // Add header template
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->headerTemplate('<div style="font-size: 10px; text-align: center;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>')
     ->save('document.pdf');
 
 // Add footer template
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->footerTemplate('<div style="font-size: 8px; text-align: center;">Generated on <span class="date"></span></div>')
     ->save('document.pdf');
 
 // Using Blade views for headers/footers
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->headerTemplate(view('pdf.header'))
     ->footerTemplate(view('pdf.footer'))
     ->save('document.pdf');
@@ -217,9 +205,8 @@ Laravel PDF provides convenient Blade directives for PDF generation:
     <p>Generated on {{ now()->format('Y-m-d H:i:s') }} | Page @pageNumber</p>
 </div>
 
-// Using in PdfBuilder
-PdfBuilder::create()
-    ->view('invoice', $data)
+// Using the Pdf facade
+Pdf::view('invoice', $data)
     ->headerTemplate(view('pdf.header', ['company' => 'ACME Corp']))
     ->footerTemplate(view('pdf.footer'))
     ->save('invoice.pdf');
@@ -272,8 +259,7 @@ PdfBuilder::create()
 ### Print Options
 
 ```php
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->printBackground()        // Include background graphics
     ->scale(1.2)              // Scale factor (0.1 - 2.0)
     ->tagged()                // Generate tagged (accessible) PDF
@@ -300,22 +286,20 @@ The default format is `A4`. You can specify format using either string or enum:
 ```php
 use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
+use Patressz\LaravelPdf\Facades\Pdf;
 
 // Using enum (recommended)
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->format(Format::A4)
     ->save('document.pdf');
 
 // Using string
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->format('A4')
     ->save('document.pdf');
 
 // Default format (A4) - no need to specify
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->save('document.pdf');
 ```
 
@@ -325,22 +309,19 @@ $pdf = PdfBuilder::create()
 
 ```php
 // Set custom filename for downloads
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->name('my-custom-document.pdf')  // .pdf extension is optional
     ->download();
 
 // Or specify filename in download method
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->download('invoice-2023.pdf');
 ```
 
 ### Custom Node.js Binary Path
 
 ```php
-$pdf = PdfBuilder::create()
-    ->setNodeBinaryPath('/custom/path/to/node')
+$pdf = Pdf::setNodeBinaryPath('/custom/path/to/node')
     ->view('document')
     ->save('document.pdf');
 ```
@@ -348,8 +329,7 @@ $pdf = PdfBuilder::create()
 ### Custom Response Headers
 
 ```php
-$pdf = PdfBuilder::create()
-    ->view('document')
+$pdf = Pdf::view('document')
     ->addHeaders([
         'Cache-Control' => 'no-cache',
         'X-Custom-Header' => 'value'
@@ -420,8 +400,7 @@ $pdf = PdfBuilder::create()
 // Controller
 public function downloadInvoice(Invoice $invoice)
 {
-    return PdfBuilder::create()
-        ->view('invoice', compact('invoice'))
+    return Pdf::view('invoice', compact('invoice'))
         ->format('A4')
         ->margins(20, 15, 20, 15) // 20mm top/bottom, 15mm left/right
         ->printBackground()       // Include background colors/images
@@ -432,8 +411,7 @@ public function downloadInvoice(Invoice $invoice)
 
 public function generateReport()
 {
-    return PdfBuilder::create()
-        ->view('reports.monthly')
+    return Pdf::view('reports.monthly')
         ->format('A4')
         ->landscape()
         ->margins(15, 10, 15, 10)
@@ -444,11 +422,12 @@ public function generateReport()
 
 ## Method Chaining
 
-All configuration methods return the `PdfBuilder` instance, allowing for fluent method chaining:
+All configuration methods return the `PdfBuilder` instance, allowing for fluent method chaining through the `Pdf` facade:
 
 ```php
-return PdfBuilder::create()
-    ->view('complex-document', $data)
+use Patressz\LaravelPdf\Facades\Pdf;
+
+return Pdf::view('complex-document', $data)
     ->format(Format::A4)
     ->landscape()
     ->margins(25, 20, 25, 20, Unit::Millimeter)
@@ -462,11 +441,10 @@ return PdfBuilder::create()
 
 ## Conditional Methods
 
-The `PdfBuilder` includes Laravel's `Conditionable` trait, allowing you to conditionally apply methods:
+The underlying `PdfBuilder` class includes Laravel's `Conditionable` trait, which you can access through the `Pdf` facade to conditionally apply methods:
 
 ```php
-$pdf = PdfBuilder::create()
-    ->view('document', $data)
+$pdf = Pdf::view('document', $data)
     ->when($user->isPremium(), function ($pdf) {
         return $pdf->headerTemplate(view('pdf.premium-header'));
     })
@@ -488,8 +466,7 @@ If you encounter "Node.js binary not found" errors:
 
 ```php
 // Set custom Node.js path
-$pdf = PdfBuilder::create()
-    ->setNodeBinaryPath('/usr/local/bin/node')  // or your custom path
+$pdf = Pdf::setNodeBinaryPath('/usr/local/bin/node')  // or your custom path
     ->view('document')
     ->save('document.pdf');
 ```
@@ -517,21 +494,19 @@ For large documents, consider:
 
 ```php
 // ✅ Works - JavaScript in main content
-PdfBuilder::create()
-    ->html('
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                document.getElementById("status").textContent = "Generated successfully";
-            });
-        </script>
-        <h1>Document</h1>
-        <p>Status: <span id="status">Loading...</span></p>
-    ')
-    ->save('document.pdf');
+Pdf::html('
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("status").textContent = "Generated successfully";
+        });
+    </script>
+    <h1>Document</h1>
+    <p>Status: <span id="status">Loading...</span></p>
+')
+->save('document.pdf');
 
 // ❌ Won't work - JavaScript in header template
-PdfBuilder::create()
-    ->view('document')
+Pdf::view('document')
     ->headerTemplate('<script>document.write("This won\'t work");</script><div>Header</div>')
     ->save('document.pdf');
 ```
