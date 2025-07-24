@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v0.4.0 - 2025-07-24
+
+* refactor: extends `FakePdfBuilder` from `PdfBuilder` and remove duplicates method keep only necessary (6d6315ce7cfc72e4117220f4d9fc1b4f07d72f38)
+* feat: add `Macroable` trait to `PdfBuilder` + update docs (a306b2a79b10e07cf7a981ced92999f69e664e59)
+
+**Full Changelog**: https://github.com/patressz/laravel-pdf/compare/v0.3.0...v0.4.0
+
 ## 0.3.0 - 2025-07-24
 
 * refactor: simplify assertion methods in `Pdf` facade and `FakePdfBuilder` and fix `assertView()` method to check if the view was set (bffb904b1bb3ff8bfca5c0105107ca5d1962d462)
