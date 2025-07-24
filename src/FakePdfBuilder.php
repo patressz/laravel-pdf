@@ -514,7 +514,7 @@ final class FakePdfBuilder implements Responsable
             ));
         }
 
-        PHPUnit::assertEquals($expectedFormat, mb_strtoupper($this->options['format']), 'Format does not match expected value.');
+        PHPUnit::assertEquals($expectedFormat, $this->options['format'], 'Format does not match expected value.');
 
         return $this;
     }

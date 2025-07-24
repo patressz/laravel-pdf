@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \Patressz\LaravelPdf\PdfBuilder create()
- * @method static \Patressz\LaravelPdf\PdfBuilder view(string $view, array $data = [])
+ * @method static \Patressz\LaravelPdf\PdfBuilder view(string $view, array<mixed, mixed> $data = [])
  * @method static \Patressz\LaravelPdf\PdfBuilder html(string $html)
  * @method static \Patressz\LaravelPdf\PdfBuilder headerTemplate(\Illuminate\View\View|string $template)
  * @method static \Patressz\LaravelPdf\PdfBuilder footerTemplate(\Illuminate\View\View|string $template)
@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Patressz\LaravelPdf\PdfBuilder inline(string $downloadFileName = 'document.pdf')
  * @method static string base64()
  * @method static string raw()
- * @method static \Patressz\LaravelPdf\PdfBuilder addHeaders(array $headers)
+ * @method static \Patressz\LaravelPdf\PdfBuilder addHeaders(array<string, string> $headers)
  * @method static \Illuminate\Http\Response toResponse(\Illuminate\Http\Request $request)
  * @method static \Patressz\LaravelPdf\PdfBuilder|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
  * @method static \Patressz\LaravelPdf\PdfBuilder|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
