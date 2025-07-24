@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Illuminate\Http\Response toResponse(\Illuminate\Http\Request $request)
  * @method static \Patressz\LaravelPdf\PdfBuilder|mixed when(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
  * @method static \Patressz\LaravelPdf\PdfBuilder|mixed unless(\Closure|mixed|null $value = null, callable|null $callback = null, callable|null $default = null)
- * @method static \Patressz\LaravelPdf\FakePdfBuilder assertView(string $view)
+ * @method static \Patressz\LaravelPdf\FakePdfBuilder assertView(string $view, \Closure|null $callback = null)
  * @method static \Patressz\LaravelPdf\FakePdfBuilder assertHtml(string $expectedHtml)
  * @method static \Patressz\LaravelPdf\FakePdfBuilder assertHeaderTemplate(string $expectedHeaderHtml)
  * @method static \Patressz\LaravelPdf\FakePdfBuilder assertFooterTemplate(string $expectedFooterHtml)

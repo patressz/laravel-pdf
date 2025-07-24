@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Patressz\LaravelPdf;
 
+use Closure;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -47,7 +48,7 @@ final class FakePdfBuilder implements Responsable
     /**
      * The view name to render the HTML content.
      */
-    public ?string $view = null;
+    public ?View $view = null;
 
     /**
      * The HTML content to convert to PDF.
@@ -87,10 +88,10 @@ final class FakePdfBuilder implements Responsable
     public function view(string $view, array $data = []): self
     {
         if ($this->html === null) {
-            $html = view($view, $data)->render();
+            $view = view($view, $data);
 
             $this->view = $view;
-            $this->html = $html;
+            $this->html = $view->render();
         }
 
         return $this;
@@ -455,10 +456,20 @@ final class FakePdfBuilder implements Responsable
 
     /**
      * Assert that the view matches the expected value.
+     *
+     * @param  (Closure(\Illuminate\View\View, array): bool)|null  $callback  Optional callback to further validate the view data.
      */
-    public function assertView(string $view): self
+    public function assertView(string $view, ?Closure $callback = null): self
     {
-        PHPUnit::assertEquals($view, $this->view, 'View does not match expected value.');
+        PHPUnit::assertEquals($view, $this->view->name(), 'View does not match expected value.');
+
+        if ($callback instanceof Closure) {
+            $result = $callback($this->view, $this->view->getData());
+
+            if (is_bool($result)) {
+                PHPUnit::assertTrue($result, 'View does not match expected value.');
+            }
+        }
 
         return $this;
     }

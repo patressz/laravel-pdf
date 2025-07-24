@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\View\View;
 use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\Facades\Pdf;
@@ -15,6 +16,16 @@ describe('FakePDfBuilderTest', function () {
         Pdf::view('layout');
 
         Pdf::assertView('layout');
+    });
+
+    it('can assert view with callback is set correctly', function () {
+        Pdf::view('layout', [
+            'key' => 'value',
+        ]);
+
+        Pdf::assertView('layout', function (View $view, array $data) {
+            return $view->name() === 'layout' && $data['key'] === 'value';
+        });
     });
 
     it('can assert html is set correctly', function () {
