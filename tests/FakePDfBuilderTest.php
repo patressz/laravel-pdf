@@ -83,22 +83,22 @@ describe('FakePDfBuilderTest', function () {
         Pdf::assertHeight($height, Unit::Inch);
     });
 
-    it('can assert that PDF landscape mode is set correctly', function () {
+    it('can assert that PDF landscape mode is set to true', function () {
         Pdf::landscape();
 
-        Pdf::assertLandscape(true);
+        Pdf::assertLandscape();
     });
 
     it('can assert that PDF outline is set correctly', function () {
         Pdf::outline();
 
-        Pdf::assertOutline(true);
+        Pdf::assertOutline();
     });
 
     it('can assert that PDF prefers CSS page size', function () {
         Pdf::preferCSSPageSize();
 
-        Pdf::assertPreferCSSPageSize(true);
+        Pdf::assertPreferCSSPageSize();
     });
 
     it('can assert that PDF margin is set correctly', function () {
@@ -119,13 +119,13 @@ describe('FakePDfBuilderTest', function () {
     it('can assert that PDF print background is enabled', function () {
         Pdf::printBackground();
 
-        Pdf::assertPrintBackground(true);
+        Pdf::assertPrintBackground();
     });
 
     it('can assert that PDF displays header and footer', function () {
         Pdf::displayHeaderFooter();
 
-        Pdf::assertDisplayHeaderFooter(true);
+        Pdf::assertDisplayHeaderFooter();
     });
 
     it('can assert that PDF scale is set correctly', function () {
@@ -138,7 +138,7 @@ describe('FakePDfBuilderTest', function () {
     it('can assert that PDF is tagged', function () {
         Pdf::tagged();
 
-        Pdf::assertTagged(true);
+        Pdf::assertTagged();
     });
 
     it('can assert that PDF page ranges are set correctly', function () {

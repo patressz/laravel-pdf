@@ -604,7 +604,7 @@ it('can download invoice', function () {
     // Assert PDF configuration
     Pdf::assertFormat('A4');
     Pdf::assertMargins(20, 15, 20, 15, 'mm');
-    Pdf::assertPrintBackground(true);
+    Pdf::assertPrintBackground();
     Pdf::assertDownloaded();
 });
 ```
@@ -628,16 +628,16 @@ Pdf::assertFooterTemplate($expectedHtml); // Assert footer template
 Pdf::assertFormat('A4'); // or Format::A4
 Pdf::assertWidth(210, 'mm');
 Pdf::assertHeight(297, 'mm');
-Pdf::assertLandscape(true); // or false
+Pdf::assertLandscape(); // Assert landscape is enabled
 
 // Options
 Pdf::assertMargins(20, 15, 20, 15, 'mm');
-Pdf::assertPrintBackground(true);
-Pdf::assertDisplayHeaderFooter(true);
+Pdf::assertPrintBackground();
+Pdf::assertDisplayHeaderFooter();
 Pdf::assertScale(1.2);
-Pdf::assertTagged(true);
-Pdf::assertOutline(true);
-Pdf::assertPreferCSSPageSize(true);
+Pdf::assertTagged();
+Pdf::assertOutline();
+Pdf::assertPreferCSSPageSize();
 Pdf::assertPageRanges('1-5,8');
 
 // Output assertions
@@ -722,9 +722,9 @@ it('generates complex PDF with multiple features', function () {
     // Assert all configurations
     Pdf::assertView('invoice');
     Pdf::assertFormat('A4');
-    Pdf::assertLandscape(true);
+    Pdf::assertLandscape();
     Pdf::assertMargins(20, 15, 20, 15, 'mm');
-    Pdf::assertPrintBackground(true);
+    Pdf::assertPrintBackground();
     Pdf::assertScale(1.1);
     Pdf::assertHeaderTemplate('<div>Header</div>');
     Pdf::assertFooterTemplate('<div>Footer</div>');

@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Patressz\LaravelPdf;
 
 use Closure;
-use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\View\View;
+use Illuminate\Http\Response;
 use InvalidArgumentException;
-use Patressz\LaravelPdf\Enums\Format;
+use Illuminate\Contracts\View\View;
 use Patressz\LaravelPdf\Enums\Unit;
+use Patressz\LaravelPdf\Enums\Format;
 use PHPUnit\Framework\Assert as PHPUnit;
+use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Contracts\Support\Responsable;
+use LogicException;
+use RuntimeException;
 
 final class FakePdfBuilder implements Responsable
 {
@@ -457,10 +459,14 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the view matches the expected value.
      *
-     * @param  (Closure(\Illuminate\View\View, array): bool)|null  $callback  Optional callback to further validate the view data.
+     * @param  (Closure(View, array<mixed, mixed>): mixed)|null  $callback  Optional callback to further validate the view data.
      */
     public function assertView(string $view, ?Closure $callback = null): self
     {
+        if ($this->view === null) {
+            throw new LogicException('No view has been set for assertion.');
+        }
+        
         PHPUnit::assertEquals($view, $this->view->name(), 'View does not match expected value.');
 
         if ($callback instanceof Closure) {
@@ -589,9 +595,9 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the landscape option matches the expected value.
      */
-    public function assertLandscape(bool $expectedLandscape): self
+    public function assertLandscape(): self
     {
-        PHPUnit::assertEquals($expectedLandscape, $this->options['landscape'], 'Landscape option does not match expected value.');
+        PHPUnit::assertEquals(true, $this->options['landscape'], 'Landscape option does not match expected value.');
 
         return $this;
     }
@@ -599,9 +605,9 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the outline option matches the expected value.
      */
-    public function assertOutline(bool $expectedOutline): self
+    public function assertOutline(): self
     {
-        PHPUnit::assertEquals($expectedOutline, $this->options['outline'], 'Outline option does not match expected value.');
+        PHPUnit::assertEquals(true, $this->options['outline'], 'Outline option does not match expected value.');
 
         return $this;
     }
@@ -609,9 +615,9 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the preferCSSPageSize option matches the expected value.
      */
-    public function assertPreferCSSPageSize(bool $expectedPreferCSSPageSize): self
+    public function assertPreferCSSPageSize(): self
     {
-        PHPUnit::assertEquals($expectedPreferCSSPageSize, $this->options['preferCSSPageSize'], 'Prefer CSS page size option does not match expected value.');
+        PHPUnit::assertEquals(true, $this->options['preferCSSPageSize'], 'Prefer CSS page size option does not match expected value.');
 
         return $this;
     }
@@ -657,9 +663,9 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the printBackground option matches the expected value.
      */
-    public function assertPrintBackground(bool $expectedPrintBackground): self
+    public function assertPrintBackground(): self
     {
-        PHPUnit::assertEquals($expectedPrintBackground, $this->options['printBackground'], 'Print background option does not match expected value.');
+        PHPUnit::assertEquals(true, $this->options['printBackground'], 'Print background option does not match expected value.');
 
         return $this;
     }
@@ -667,9 +673,9 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the displayHeaderFooter option matches the expected value.
      */
-    public function assertDisplayHeaderFooter(bool $expectedDisplayHeaderFooter): self
+    public function assertDisplayHeaderFooter(): self
     {
-        PHPUnit::assertEquals($expectedDisplayHeaderFooter, $this->options['displayHeaderFooter'], 'Display header footer option does not match expected value.');
+        PHPUnit::assertEquals(true, $this->options['displayHeaderFooter'], 'Display header footer option does not match expected value.');
 
         return $this;
     }
@@ -687,9 +693,9 @@ final class FakePdfBuilder implements Responsable
     /**
      * Assert that the tagged option matches the expected value.
      */
-    public function assertTagged(bool $expectedTagged): self
+    public function assertTagged(): self
     {
-        PHPUnit::assertEquals($expectedTagged, $this->options['tagged'], 'Tagged option does not match expected value.');
+        PHPUnit::assertEquals(true, $this->options['tagged'], 'Tagged option does not match expected value.');
 
         return $this;
     }
