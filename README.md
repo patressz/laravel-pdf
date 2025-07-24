@@ -71,7 +71,7 @@ $pdf = Pdf::html('<h1>Hello World</h1><p>This is a PDF.</p>')
     ->save('document.pdf');
 ```
 
-### Download PDF Response
+### Download PDF response
 
 ```php
 // Direct download
@@ -80,7 +80,7 @@ return Pdf::view('invoice', ['user' => $user])
     ->download('invoice.pdf');
 ```
 
-### Inline PDF Response
+### Inline PDF response
 
 ```php
 // Display in browser
@@ -89,7 +89,7 @@ return Pdf::view('invoice', ['user' => $user])
     ->inline('invoice.pdf');
 ```
 
-### Base64 Output
+### Base64 output
 
 ```php
 // Get PDF as base64 string
@@ -98,7 +98,7 @@ $base64 = Pdf::view('invoice', ['user' => $user])
     ->base64();
 ```
 
-### Binary Output
+### Binary output
 
 ```php
 // Get PDF as binary string
@@ -107,9 +107,9 @@ $binaryPdf = Pdf::view('invoice', ['user' => $user])
     ->raw();
 ```
 
-## Advanced Configuration
+## Advanced configuration
 
-### Page Dimensions and Orientation
+### Page dimensions and orientation
 
 ```php
 use Patressz\LaravelPdf\Enums\Format;
@@ -163,7 +163,7 @@ $pdf = Pdf::view('document')
     ->save('document.pdf');
 ```
 
-### Blade Directives
+### Blade directives
 
 Laravel PDF provides convenient Blade directives for PDF generation:
 
@@ -185,7 +185,7 @@ Laravel PDF provides convenient Blade directives for PDF generation:
 </div>
 ```
 
-**Header/Footer Template Limitations:**
+**header/footer template limitations:**
 - Script tags inside templates are not evaluated (no JavaScript)
 - Page styles are not visible inside templates (use inline styles)
 - Only `@pageNumber` and `@totalPages` directives work in templates
@@ -256,7 +256,7 @@ Pdf::view('invoice', $data)
 </html>
 ```
 
-### Print Options
+### Print options
 
 ```php
 $pdf = Pdf::view('document')
@@ -269,7 +269,7 @@ $pdf = Pdf::view('document')
     ->save('document.pdf');
 ```
 
-## Available Formats
+## Available formats
 
 The default format is `A4`. You can specify format using either string or enum:
 
@@ -305,7 +305,7 @@ $pdf = Pdf::view('document')
 
 ## Configuration
 
-### Download Filename
+### Download filename
 
 ```php
 // Set custom filename for downloads
@@ -318,7 +318,7 @@ $pdf = Pdf::view('document')
     ->download('invoice-2023.pdf');
 ```
 
-### Custom Node.js Binary Path
+### Custom Node.js binary path
 
 ```php
 $pdf = Pdf::setNodeBinaryPath('/custom/path/to/node')
@@ -326,7 +326,7 @@ $pdf = Pdf::setNodeBinaryPath('/custom/path/to/node')
     ->save('document.pdf');
 ```
 
-### Custom Response Headers
+### Custom response headers
 
 ```php
 $pdf = Pdf::view('document')
@@ -339,7 +339,7 @@ $pdf = Pdf::view('document')
 
 ## Examples
 
-### Invoice Generation
+### Invoice generation
 
 ```php
 // resources/views/invoice.blade.php
@@ -420,7 +420,7 @@ public function generateReport()
 }
 ```
 
-## Method Chaining
+## Method chaining
 
 All configuration methods return the `PdfBuilder` instance, allowing for fluent method chaining through the `Pdf` facade:
 
@@ -439,7 +439,7 @@ return Pdf::view('complex-document', $data)
     ->download();
 ```
 
-## Conditional Methods
+## Conditional methods
 
 The underlying `PdfBuilder` class includes Laravel's `Conditionable` trait, which you can access through the `Pdf` facade to conditionally apply methods:
 
@@ -460,7 +460,7 @@ $pdf = Pdf::view('document', $data)
 
 ## Troubleshooting
 
-### Node.js Not Found
+### Node.js not found
 
 If you encounter "Node.js binary not found" errors:
 
@@ -471,7 +471,7 @@ $pdf = Pdf::setNodeBinaryPath('/usr/local/bin/node')  // or your custom path
     ->save('document.pdf');
 ```
 
-### Memory Issues
+### Memory issues
 
 For large documents, consider:
 
@@ -479,13 +479,13 @@ For large documents, consider:
 - Reducing image sizes in your HTML
 - Optimizing CSS and avoiding complex layouts
 
-### CSS Issues
+### CSS issues
 
 - Ensure all CSS is inline or included in `<style>` tags
 - Use absolute paths for images and assets
 - Test with `printBackground()` if backgrounds aren't showing
 
-### JavaScript and Header/Footer Limitations
+### JavaScript and Header/Footer limitations
 
 **JavaScript support:**
 - ✅ JavaScript works in main document content
@@ -513,21 +513,21 @@ Pdf::view('document')
 
 ## API Reference
 
-### Content Methods
+### Content methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
 | `view()` | `string $view, array $data = []` | Render Blade view as PDF content |
 | `html()` | `string $html` | Set raw HTML content (takes precedence over view) |
 
-### Template Methods
+### Template methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
 | `headerTemplate()` | `string\|View $template` | Set header template with special classes |
 | `footerTemplate()` | `string\|View $template` | Set footer template with special classes |
 
-### Format & Dimensions
+### Format & dimensions
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
@@ -537,7 +537,7 @@ Pdf::view('document')
 | `landscape()` | - | Set landscape orientation |
 | `margins()` | `float $top, float $right, float $bottom, float $left, Unit\|string $unit = 'mm'` | Set page margins |
 
-### Print Options
+### Print options
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
@@ -549,7 +549,7 @@ Pdf::view('document')
 | `preferCSSPageSize()` | - | Prefer CSS @page size over format options |
 | `pageRanges()` | `string $ranges` | Print specific pages (e.g., '1-5,8,11-13') |
 
-### Output Methods
+### Output methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
@@ -560,7 +560,7 @@ Pdf::view('document')
 | `raw()` | - | Return PDF as binary string |
 | `toResponse()` | `$request` | Return as HTTP response (Responsable interface) |
 
-### Configuration Methods
+### Configuration methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
@@ -568,7 +568,7 @@ Pdf::view('document')
 | `setNodeBinaryPath()` | `string $path` | Set custom Node.js binary path |
 | `addHeaders()` | `array $headers` | Add custom response headers |
 
-### Blade Directives
+### Blade directives
 
 | Directive | Output | Description |
 |-----------|--------|-------------|
@@ -578,10 +578,159 @@ Pdf::view('document')
 
 **Note:** `@pageNumber` and `@totalPages` only work in `headerTemplate()` and `footerTemplate()` views. `@pageBreak` only works in main document content. Header/footer templates have limitations: no JavaScript execution and no access to page styles.
 
-## Testing
+### Testing PDF generation in your application
 
-```bash
-composer test
+Laravel PDF provides a fake implementation for testing without actually generating PDFs:
+
+```php
+use Patressz\LaravelPdf\Facades\Pdf;
+use Illuminate\View\View;
+
+it('can download invoice', function () {
+    // Fake the PDF generation
+    Pdf::fake();
+    
+    $invoice = Invoice::factory()->create();
+    
+    $response = $this->get("/invoices/{$invoice->id}/download");
+    
+    $response->assertSuccessful();
+    
+    // Assert PDF was generated with correct view and data
+    Pdf::assertView('invoice', function (View $view, array $data) use ($invoice): bool {
+        return $data['invoice']->id === $invoice->id;
+    });
+    
+    // Assert PDF configuration
+    Pdf::assertFormat('A4');
+    Pdf::assertMargins(20, 15, 20, 15, 'mm');
+    Pdf::assertPrintBackground(true);
+    Pdf::assertDownloaded();
+});
+```
+
+### Available test assertions
+
+The fake PDF implementation provides comprehensive assertions:
+
+```php
+// Content assertions
+Pdf::assertView('invoice'); // Assert specific view was used
+Pdf::assertView('invoice', function (View $view, array $data): bool {
+    // Callback receives View object and data array
+    return $data['invoice']->total > 100;
+});
+Pdf::assertHtml('<h1>Test</h1>'); // Assert raw HTML content
+Pdf::assertHeaderTemplate($expectedHtml); // Assert header template
+Pdf::assertFooterTemplate($expectedHtml); // Assert footer template
+
+// Format and dimensions
+Pdf::assertFormat('A4'); // or Format::A4
+Pdf::assertWidth(210, 'mm');
+Pdf::assertHeight(297, 'mm');
+Pdf::assertLandscape(true); // or false
+
+// Options
+Pdf::assertMargins(20, 15, 20, 15, 'mm');
+Pdf::assertPrintBackground(true);
+Pdf::assertDisplayHeaderFooter(true);
+Pdf::assertScale(1.2);
+Pdf::assertTagged(true);
+Pdf::assertOutline(true);
+Pdf::assertPreferCSSPageSize(true);
+Pdf::assertPageRanges('1-5,8');
+
+// Output assertions
+Pdf::assertName('invoice.pdf'); // Assert download filename
+Pdf::assertSaved('/path/to/file.pdf'); // Assert file was saved
+Pdf::assertDownloaded('invoice.pdf'); // Assert download headers set
+Pdf::assertInline('invoice.pdf'); // Assert inline headers set
+```
+
+### Testing with callbacks
+
+Use callbacks for more complex assertions:
+
+```php
+use Illuminate\View\View;
+
+beforeEach(function () {
+    Pdf::fake();
+});
+
+it('validates invoice data in PDF', function () {
+    $invoice = Invoice::factory()->create(['total' => 150]);
+    
+    Pdf::view('invoice', compact('invoice'));
+    
+    // Test view and its data
+    Pdf::assertView('invoice', function (View $view, array $data) use ($invoice): bool {
+        return $data['invoice']->total > 100 
+            && $data['invoice']->id === $invoice->id
+            && $view->name() === 'invoice';
+    });
+});
+
+it('asserts simple view without callback', function () {
+    Pdf::view('invoice');
+    
+    Pdf::assertView('invoice');
+});
+```
+### Testing services that use PDF
+
+When testing components that use PDF generation:
+
+```php
+use Illuminate\View\View;
+
+it('generates monthly report', function () {
+    Pdf::fake();
+    
+    $service = new ReportService();
+    $service->generateMonthlyReport(2025, 1);
+    
+    Pdf::assertView('reports.monthly', function (View $view, array $data): bool {
+        return $data['month'] === 1 && $data['year'] === 2025;
+    });
+    Pdf::assertFormat('A4');
+    Pdf::assertLandscape(true);
+});
+```
+
+### Test example with all features
+
+Complete test example showing multiple PDF features:
+
+```php
+it('generates complex PDF with multiple features', function () {
+    Pdf::fake();
+    
+    $invoice = Invoice::factory()->create();
+    
+    Pdf::view('invoice', compact('invoice'))
+        ->format(Format::A4)
+        ->landscape()
+        ->margins(20, 15, 20, 15, Unit::Millimeter)
+        ->printBackground()
+        ->scale(1.1)
+        ->headerTemplate('<div>Header</div>')
+        ->footerTemplate('<div>Footer</div>')
+        ->name('test-invoice.pdf')
+        ->download();
+        
+    // Assert all configurations
+    Pdf::assertView('invoice');
+    Pdf::assertFormat('A4');
+    Pdf::assertLandscape(true);
+    Pdf::assertMargins(20, 15, 20, 15, 'mm');
+    Pdf::assertPrintBackground(true);
+    Pdf::assertScale(1.1);
+    Pdf::assertHeaderTemplate('<div>Header</div>');
+    Pdf::assertFooterTemplate('<div>Footer</div>');
+    Pdf::assertName('test-invoice.pdf');
+    Pdf::assertDownloaded('test-invoice.pdf');
+});
 ```
 
 ## Contributing
