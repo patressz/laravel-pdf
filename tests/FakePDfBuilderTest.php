@@ -1,0 +1,173 @@
+<?php
+
+declare(strict_types=1);
+
+use Patressz\LaravelPdf\Enums\Format;
+use Patressz\LaravelPdf\Enums\Unit;
+use Patressz\LaravelPdf\Facades\Pdf;
+
+beforeEach(function () {
+    Pdf::fake();
+});
+
+describe('FakePDfBuilderTest', function () {
+    it('can assert view is set correctly', function () {
+        Pdf::view('layout');
+
+        Pdf::assertView('layout');
+    });
+
+    it('can assert html is set correctly', function () {
+        $htmlContent = '<html><body>Test</body></html>';
+        Pdf::html($htmlContent);
+
+        Pdf::assertHtml($htmlContent);
+    });
+
+    it('can assert that PDF header template is set correctly', function () {
+        $headerContent = '<html><body>Header</body></html>';
+        Pdf::headerTemplate($headerContent);
+
+        Pdf::assertHeaderTemplate($headerContent);
+    });
+
+    it('can assert that PDF footer template is set correctly', function () {
+        $footerContent = '<html><body>Footer</body></html>';
+        Pdf::footerTemplate($footerContent);
+
+        Pdf::assertFooterTemplate($footerContent);
+    });
+
+    it('can assert that PDF format is set correctly', function () {
+        Pdf::format(Format::A6);
+
+        Pdf::assertFormat('A6');
+    });
+
+    it('can assert that PDF width is set correctly', function () {
+        $width = 210;
+        Pdf::width($width);
+
+        Pdf::assertWidth($width);
+    });
+
+    it('can assert that PDF width is set correctly using inches', function () {
+        $width = 210;
+        Pdf::width($width, Unit::Inch);
+
+        Pdf::assertWidth($width, Unit::Inch);
+    });
+
+    it('can assert that PDF height is set correctly', function () {
+        $height = 297;
+        Pdf::height($height);
+
+        Pdf::assertHeight($height);
+    });
+
+    it('can assert that PDF height is set correctly using inches', function () {
+        $height = 297;
+        Pdf::height($height, Unit::Inch);
+
+        Pdf::assertHeight($height, Unit::Inch);
+    });
+
+    it('can assert that PDF landscape mode is set correctly', function () {
+        Pdf::landscape();
+
+        Pdf::assertLandscape(true);
+    });
+
+    it('can assert that PDF outline is set correctly', function () {
+        Pdf::outline();
+
+        Pdf::assertOutline(true);
+    });
+
+    it('can assert that PDF prefers CSS page size', function () {
+        Pdf::preferCSSPageSize();
+
+        Pdf::assertPreferCSSPageSize(true);
+    });
+
+    it('can assert that PDF margin is set correctly', function () {
+        Pdf::margins(
+            top: 10,
+            unit: Unit::Inch
+        );
+
+        Pdf::assertMargins(
+            expectedTop: 10,
+            expectedRight: 0,
+            expectedBottom: 0,
+            expectedLeft: 0,
+            unit: Unit::Inch
+        );
+    });
+
+    it('can assert that PDF print background is enabled', function () {
+        Pdf::printBackground();
+
+        Pdf::assertPrintBackground(true);
+    });
+
+    it('can assert that PDF displays header and footer', function () {
+        Pdf::displayHeaderFooter();
+
+        Pdf::assertDisplayHeaderFooter(true);
+    });
+
+    it('can assert that PDF scale is set correctly', function () {
+        $scale = 1.5;
+        Pdf::scale($scale);
+
+        Pdf::assertScale($scale);
+    });
+
+    it('can assert that PDF is tagged', function () {
+        Pdf::tagged();
+
+        Pdf::assertTagged(true);
+    });
+
+    it('can assert that PDF page ranges are set correctly', function () {
+        $pageRanges = '1-5, 8, 11-13';
+        Pdf::pageRanges($pageRanges);
+
+        Pdf::assertPageRanges($pageRanges);
+    });
+
+    it('can assert that PDF name is set correctly', function () {
+        $name = 'my-document.pdf';
+        Pdf::name($name);
+
+        Pdf::assertName($name);
+    });
+
+    it('can assert that PDF was saved to a specific path', function () {
+        $path = 'fake/path/to/document.pdf';
+        Pdf::save($path);
+
+        Pdf::assertSaved($path);
+    });
+
+    it('can assert that PDF was downloaded', function () {
+        Pdf::download();
+
+        Pdf::assertDownloaded();
+    });
+
+    it('can assert that PDF was downloaded to a specific path', function () {
+        $downloadFileName = 'downloaded.pdf';
+        Pdf::download($downloadFileName);
+
+        Pdf::assertDownloaded($downloadFileName);
+    });
+
+    it('can assert that PDF was displayed inline', function () {
+        $downloadFileName = 'inline.pdf';
+        Pdf::inline($downloadFileName);
+
+        Pdf::assertInline($downloadFileName);
+    });
+});
