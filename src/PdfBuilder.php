@@ -16,7 +16,7 @@ use Patressz\LaravelPdf\Enums\Unit;
 use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
-final class PdfBuilder implements Responsable
+class PdfBuilder implements Responsable
 {
     use Conditionable;
 

@@ -5,67 +5,21 @@ declare(strict_types=1);
 namespace Patressz\LaravelPdf;
 
 use Closure;
-use Illuminate\Support\Str;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
 use InvalidArgumentException;
-use Illuminate\Contracts\View\View;
-use Patressz\LaravelPdf\Enums\Unit;
-use Patressz\LaravelPdf\Enums\Format;
-use PHPUnit\Framework\Assert as PHPUnit;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Contracts\Support\Responsable;
 use LogicException;
-use RuntimeException;
+use Patressz\LaravelPdf\Enums\Format;
+use Patressz\LaravelPdf\Enums\Unit;
+use PHPUnit\Framework\Assert as PHPUnit;
 
-final class FakePdfBuilder implements Responsable
+class FakePdfBuilder extends PdfBuilder implements Responsable
 {
-    use Conditionable;
-
-    /**
-     * The options for the PDF generation.
-     *
-     * @var array<string, mixed>
-     */
-    public array $options = [];
-
-    /**
-     * The margins for the PDF document.
-     *
-     * @var array<string, string>
-     */
-    public array $margins = [];
-
-    /**
-     * The headers to be included in the response.
-     *
-     * @var array<string, string>
-     */
-    public array $responseHeaders = [];
-
-    /**
-     * The filename to be used when downloading the PDF.
-     */
-    public ?string $downloadFileName = null;
-
     /**
      * The view name to render the HTML content.
      */
     public ?View $view = null;
-
-    /**
-     * The HTML content to convert to PDF.
-     */
-    public ?string $html = null;
-
-    /**
-     * The header HTML for the PDF.
-     */
-    public ?string $headerHtml = null;
-
-    /**
-     * The footer HTML for the PDF.
-     */
-    public ?string $footerHtml = null;
 
     /**
      * Store generated PDFs for testing assertions.
@@ -75,15 +29,9 @@ final class FakePdfBuilder implements Responsable
     public array $generatedPdfs = [];
 
     /**
-     * Create a new instance of the FakePdfBuilder.
-     */
-    public static function create(): self
-    {
-        return new self;
-    }
-
-    /**
      * Pass the view name and data to render the HTML content.
+     *
+     * Note: The `html()` method always takes precedence over this method, regardless of call order.
      *
      * @param  array<mixed, mixed>  $data
      */
@@ -100,273 +48,6 @@ final class FakePdfBuilder implements Responsable
     }
 
     /**
-     * Set the HTML content to convert to PDF.
-     */
-    public function html(string $html): self
-    {
-        $this->html = $html;
-
-        return $this;
-    }
-
-    /**
-     * Set the HTML content for the header template.
-     */
-    public function headerTemplate(string|View $template): self
-    {
-        $this->displayHeaderFooter();
-
-        if ($template instanceof View) {
-            $template = $template->render();
-        }
-
-        $this->headerHtml = $template;
-
-        return $this;
-    }
-
-    /**
-     * Set the HTML content for the footer template.
-     */
-    public function footerTemplate(string|View $template): self
-    {
-        $this->displayHeaderFooter();
-
-        if ($template instanceof View) {
-            $template = $template->render();
-        }
-
-        $this->footerHtml = $template;
-
-        return $this;
-    }
-
-    /**
-     * Set the paper format of the PDF document.
-     */
-    public function format(string|Format $format): self
-    {
-        if ($format instanceof Format) {
-            $this->options['format'] = mb_strtoupper($format->value);
-
-            return $this;
-        }
-
-        $format = mb_strtoupper($format);
-
-        $validFormats = collect(Format::cases())->map(fn (Format $case) => mb_strtoupper($case->value));
-
-        if (! in_array($format, $validFormats->toArray(), true)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid format [%s]. Expected one of: [%s]',
-                $format,
-                $validFormats->implode(', '),
-            ));
-        }
-
-        $this->options['format'] = $format;
-
-        return $this;
-    }
-
-    /**
-     * Set the width of the PDF document.
-     */
-    public function width(float $width, Unit|string $unit = Unit::Millimeter): self
-    {
-        if ($unit instanceof Unit) {
-            $unit = $unit->value;
-        }
-
-        $unit = mb_strtolower($unit);
-
-        $validUnits = collect(Unit::cases())->map(fn (Unit $case) => mb_strtolower($case->value));
-
-        if (! in_array($unit, $validUnits->toArray(), true)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid unit [%s]. Expected one of: [%s]',
-                $unit,
-                $validUnits->implode(', ')
-            ));
-        }
-
-        $this->options['width'] = "{$width}{$unit}";
-
-        return $this;
-    }
-
-    /**
-     * Set the height of the PDF document.
-     */
-    public function height(float $height, Unit|string $unit = Unit::Millimeter): self
-    {
-        if ($unit instanceof Unit) {
-            $unit = $unit->value;
-        }
-
-        $unit = mb_strtolower($unit);
-
-        $validUnits = collect(Unit::cases())->map(fn (Unit $case) => mb_strtolower($case->value));
-
-        if (! in_array($unit, $validUnits->toArray(), true)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid unit [%s]. Expected one of: [%s]',
-                $unit,
-                $validUnits->implode(', ')
-            ));
-        }
-
-        $this->options['height'] = "{$height}{$unit}";
-
-        return $this;
-    }
-
-    /**
-     * Set the PDF orientation to landscape.
-     */
-    public function landscape(): self
-    {
-        $this->options['landscape'] = true;
-
-        return $this;
-    }
-
-    /**
-     * Whether or not to embed the document outline into the PDF.
-     */
-    public function outline(): self
-    {
-        $this->options['outline'] = true;
-
-        return $this;
-    }
-
-    /**
-     * Prefer CSS page size over the format option.
-     */
-    public function preferCSSPageSize(): self
-    {
-        $this->options['preferCSSPageSize'] = true;
-
-        return $this;
-    }
-
-    /**
-     * Set the margins for the PDF document.
-     */
-    public function margins(
-        float $top = 0,
-        float $right = 0,
-        float $bottom = 0,
-        float $left = 0,
-        Unit|string $unit = Unit::Millimeter,
-    ): self {
-        if ($unit instanceof Unit) {
-            $unit = $unit->value;
-        }
-
-        $unit = mb_strtolower($unit);
-
-        $validUnits = collect(Unit::cases())->map(fn (Unit $case) => mb_strtolower($case->value));
-
-        if (! in_array($unit, $validUnits->toArray(), true)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid unit [%s]. Expected one of: [%s]',
-                $unit,
-                $validUnits->implode(', ')
-            ));
-        }
-
-        $this->margins = [
-            'top' => "{$top}{$unit}",
-            'right' => "{$right}{$unit}",
-            'bottom' => "{$bottom}{$unit}",
-            'left' => "{$left}{$unit}",
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Print background graphics.
-     */
-    public function printBackground(): self
-    {
-        $this->options['printBackground'] = true;
-
-        return $this;
-    }
-
-    /**
-     * Display header and footer.
-     */
-    public function displayHeaderFooter(): self
-    {
-        $this->options['displayHeaderFooter'] = true;
-
-        return $this;
-    }
-
-    /**
-     * Set the scale factor for the PDF rendering.
-     */
-    public function scale(float $scale): self
-    {
-        if ($scale < 0.1 || $scale > 2) {
-            throw new InvalidArgumentException('Scale must be a positive number between 0.1 and 2.');
-        }
-
-        $this->options['scale'] = $scale;
-
-        return $this;
-    }
-
-    /**
-     * Whether or not to generate tagged (accessible) PDF.
-     */
-    public function tagged(): self
-    {
-        $this->options['tagged'] = true;
-
-        return $this;
-    }
-
-    /**
-     * Paper ranges to print.
-     */
-    public function pageRanges(string $ranges): self
-    {
-        if (empty($ranges)) {
-            throw new InvalidArgumentException('Page ranges cannot be empty.');
-        }
-
-        $this->options['pageRanges'] = $ranges;
-
-        return $this;
-    }
-
-    /**
-     * Set the filename to be used when downloading the PDF.
-     */
-    public function name(string $downloadFileName): self
-    {
-        $this->downloadFileName = Str::of($downloadFileName)
-            ->lower()
-            ->pipe(fn (string $name): string => Str::endsWith($name, 'pdf') ? $name : $name.'.pdf')
-            ->toString();
-
-        return $this;
-    }
-
-    /**
-     * Set the path to the Node.js binary (fake implementation).
-     */
-    public function setNodeBinaryPath(string $path): self
-    {
-        return $this;
-    }
-
-    /**
      * Save the generated PDF to the specified output path (fake implementation).
      */
     public function save(string $outputPath): string
@@ -374,40 +55,6 @@ final class FakePdfBuilder implements Responsable
         $this->generatedPdfs[$outputPath] = $this->generateFakePdfContent();
 
         return $outputPath;
-    }
-
-    /**
-     * Set the response headers for downloading the PDF.
-     */
-    public function download(string $downloadFileName = 'document.pdf'): self
-    {
-        if (! $this->downloadFileName) {
-            $this->name($downloadFileName);
-        }
-
-        $this->addHeaders([
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="'.$this->downloadFileName.'"',
-        ]);
-
-        return $this;
-    }
-
-    /**
-     * Set the response headers for inline PDF.
-     */
-    public function inline(string $downloadFileName = 'document.pdf'): self
-    {
-        if (! $this->downloadFileName) {
-            $this->name($downloadFileName);
-        }
-
-        $this->addHeaders([
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$this->downloadFileName.'"',
-        ]);
-
-        return $this;
     }
 
     /**
@@ -424,20 +71,6 @@ final class FakePdfBuilder implements Responsable
     public function raw(): string
     {
         return $this->generateFakePdfContent();
-    }
-
-    /**
-     * Add custom headers to the response.
-     *
-     * @param  array<string, string>  $headers
-     */
-    public function addHeaders(array $headers): self
-    {
-        foreach ($headers as $key => $value) {
-            $this->responseHeaders[$key] = $value;
-        }
-
-        return $this;
     }
 
     /**
@@ -466,7 +99,7 @@ final class FakePdfBuilder implements Responsable
         if ($this->view === null) {
             throw new LogicException('No view has been set for assertion.');
         }
-        
+
         PHPUnit::assertEquals($view, $this->view->name(), 'View does not match expected value.');
 
         if ($callback instanceof Closure) {
