@@ -29,8 +29,10 @@ function parseArgs() {
     let browser = null;
 
     try {
-        browser = await chromium.launch();
-        
+        let executablePath = await chromium.executablePath();
+
+        browser = executablePath ? await chromium.launch({ executablePath }) : await chromium.launch();
+
         const context = await browser.newContext();
         const page = await context.newPage();
         
