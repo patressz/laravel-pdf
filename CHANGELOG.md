@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v0.5.1 - 2025-07-28
+
+* refactor: add `PLAYWRIGHT_BROWSERS_PATH` env variable to `Process` to search for browsers in that env when is defined (d7eb6151c5e358c1df5b6f10f26e87b11d685af2)
+
+**Full Changelog**: https://github.com/patressz/laravel-pdf/compare/v0.5.0...v0.5.1
+
 ## v0.5.0 - 2025-07-25
 
 * fix: ensure executable path is used when launching Chromium browser (8776db205cb706011c4a3ccea637b5791de514e7)
