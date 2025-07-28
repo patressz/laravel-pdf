@@ -549,10 +549,11 @@ class PdfBuilder implements Responsable
             }
 
             $process = Process::timeout(60)
-                ->env([
+                ->env(array_filter([
                     'PATH' => PHP_OS_FAMILY === 'Windows' ? getenv('PATH') : 'PATH:/usr/local/bin:/opt/homebrew/bin',
-                    'NODE_PATH' => base_path().'/node_modules',
-                ])
+                    'NODE_PATH' => base_path('node_modules'),
+                    'PLAYWRIGHT_BROWSERS_PATH' => getenv('PLAYWRIGHT_BROWSERS_PATH') ?: null,
+                ]))
                 ->run($args);
 
             if ($process->failed()) {
