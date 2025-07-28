@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v0.5.0 - 2025-07-25
+
+* fix: ensure executable path is used when launching Chromium browser (8776db205cb706011c4a3ccea637b5791de514e7)
+
+**Full Changelog**: https://github.com/patressz/laravel-pdf/compare/v0.4.0...v0.5.0
+
 ## v0.4.0 - 2025-07-24
 
 * refactor: extends `FakePdfBuilder` from `PdfBuilder` and remove duplicates method keep only necessary (6d6315ce7cfc72e4117220f4d9fc1b4f07d72f38)
