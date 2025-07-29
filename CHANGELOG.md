@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## v0.6.0 - 2025-07-29
+
+* feat: add `fromUrl()` method to `PdfBuilder` (d9928c43093dad748cd44bb19ff795fd07d69e6c)
+* docs: add docs about `fromUrl()` method (6e75ab06b66ef6c144748542a158684b86f6b38d)
+
+**Full Changelog**: https://github.com/patressz/laravel-pdf/compare/v0.5.1...v0.6.0
+
 ## v0.5.1 - 2025-07-28
 
 * refactor: add `PLAYWRIGHT_BROWSERS_PATH` env variable to `Process` to search for browsers in that env when is defined (d7eb6151c5e358c1df5b6f10f26e87b11d685af2)
