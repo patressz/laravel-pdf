@@ -72,6 +72,26 @@ $pdf = Pdf::html('<h1>Hello World</h1><p>This is a PDF.</p>')
     ->save('document.pdf');
 ```
 
+### Generating PDF from URL
+
+You can generate a PDF directly from a public URL (e.g., an external website):
+
+```php
+use Patressz\LaravelPdf\Facades\Pdf;
+
+// Generate PDF from a URL
+$pdf = Pdf::fromUrl('https://example.com/invoice/123')
+    ->format('A4')
+    ->save('invoice.pdf');
+
+// Download PDF generated from a URL
+return Pdf::fromUrl('https://example.com/invoice/123')
+    ->format('A4')
+    ->download('invoice.pdf');
+```
+
+> The URL must start with `http://` or `https://`. If the URL is invalid, an `InvalidArgumentException` will be thrown.
+
 ### Download PDF response
 
 ```php
@@ -542,6 +562,7 @@ Pdf::view('document')
 |--------|------------|-------------|
 | `view()` | `string $view, array $data = []` | Render Blade view as PDF content |
 | `html()` | `string $html` | Set raw HTML content (takes precedence over view) |
+| `fromUrl()` | `string $url` | Generate PDF from a public URL (must start with http:// or https://) |
 
 ### Template methods
 
@@ -649,6 +670,7 @@ The fake PDF implementation provides comprehensive assertions:
 
 ```php
 // Content assertions
+Pdf::assertUrl('https://www.example.com');
 Pdf::assertView('invoice'); // Assert specific view was used
 Pdf::assertView('invoice', function (View $view, array $data): bool {
     // Callback receives View object and data array
