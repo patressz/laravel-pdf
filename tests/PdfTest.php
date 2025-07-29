@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Route;
 use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
 use Patressz\LaravelPdf\Facades\Pdf;
@@ -274,7 +275,11 @@ it('can save PDF file with landscape orientation', function () {
 });
 
 it('can save PDF file generated from URL', function () {
-    $url = 'https://example.com';
+    Route::get('/invoice', function () {
+        return view('layout');
+    })->name('invoice');
+
+    $url = route('invoice');
 
     $path = Pdf::fromUrl($url)
         ->save(getTempDir('test.pdf'));
