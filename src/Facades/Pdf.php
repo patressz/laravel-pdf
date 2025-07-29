@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \Patressz\LaravelPdf\PdfBuilder create()
+ * @method static \Patressz\LaravelPdf\PdfBuilder fromUrl(string $url)
  * @method static \Patressz\LaravelPdf\PdfBuilder view(string $view, array<mixed, mixed> $data = [])
  * @method static \Patressz\LaravelPdf\PdfBuilder html(string $html)
  * @method static \Patressz\LaravelPdf\PdfBuilder headerTemplate(\Illuminate\View\View|string $template)
@@ -39,6 +40,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void mixin(object $mixin, bool $replace = true)
  * @method static bool hasMacro(string $name)
  * @method static void flushMacros()
+ * @method static \Patressz\LaravelPdf\FakePdfBuilder assertUrl(string $url)
  * @method static \Patressz\LaravelPdf\FakePdfBuilder assertView(string $view, \Closure|null $callback = null)
  * @method static \Patressz\LaravelPdf\FakePdfBuilder assertHtml(string $expectedHtml)
  * @method static \Patressz\LaravelPdf\FakePdfBuilder assertHeaderTemplate(string $expectedHeaderHtml)

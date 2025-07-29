@@ -18,6 +18,17 @@ describe('FakePDfBuilderTest', function () {
         Pdf::assertView('layout');
     });
 
+    it('can assert url is set correctly', function () {
+        $url = 'https://example.com';
+        Pdf::fromUrl($url);
+
+        Pdf::assertUrl($url);
+    });
+
+    it('can throws an exception when url is invalid', function () {
+        Pdf::fromUrl('example.com');
+    })->throws(InvalidArgumentException::class, 'Expected a valid URL format starts with http:// or https://');
+
     it('can assert view with callback is set correctly', function () {
         Pdf::view('layout', [
             'key' => 'value',

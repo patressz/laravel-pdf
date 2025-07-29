@@ -90,6 +90,17 @@ class FakePdfBuilder extends PdfBuilder implements Responsable
     }
 
     /**
+     * Assert that the PDF was generated from a URL.
+     */
+    public function assertUrl(string $url): self
+    {
+        PHPUnit::assertTrue($this->isFromUrl, 'PDF was not generated from a URL.');
+        PHPUnit::assertEquals($url, $this->url, 'URL does not match expected value.');
+
+        return $this;
+    }
+
+    /**
      * Assert that the view matches the expected value.
      *
      * @param  (Closure(View, array<mixed, mixed>): mixed)|null  $callback  Optional callback to further validate the view data.

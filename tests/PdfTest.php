@@ -272,3 +272,14 @@ it('can save PDF file with landscape orientation', function () {
         ->toBeReadableFile()
         ->toHaveDimensions(1054, 816);
 });
+
+it('can save PDF file generated from URL', function () {
+    $url = 'https://example.com';
+
+    $path = Pdf::fromUrl($url)
+        ->save(getTempDir('test.pdf'));
+
+    expect($path)
+        ->toBeFile()
+        ->toBeReadableFile();
+});

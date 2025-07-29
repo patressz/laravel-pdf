@@ -12,6 +12,7 @@ use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
 use InvalidArgumentException;
+use LogicException;
 use Patressz\LaravelPdf\Enums\Format;
 use Patressz\LaravelPdf\Enums\Unit;
 use RuntimeException;
@@ -82,11 +83,39 @@ class PdfBuilder implements Responsable
     public ?string $footerHtml = null;
 
     /**
+     * Whether the PDF is generated from a URL.
+     */
+    public bool $isFromUrl = false;
+
+    /**
+     * The URL to generate the PDF from.
+     */
+    public ?string $url = null;
+
+    /**
      * Create a new instance of the PdfBuilder.
      */
     public static function create(): self
     {
         return new self;
+    }
+
+    /**
+     * Set the URL to generate the PDF from.
+     */
+    public function fromUrl(string $url): self
+    {
+        if (! Str::isUrl($url)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid URL [%s]. Expected a valid URL format starts with http:// or https://',
+                $url
+            ));
+        }
+
+        $this->isFromUrl = true;
+        $this->url = $url;
+
+        return $this;
     }
 
     /**
@@ -531,14 +560,24 @@ class PdfBuilder implements Responsable
     {
         $this->createTemporaryFile();
 
+        if (! blank($this->html) && $this->isFromUrl) {
+            throw new LogicException('Both HTML content (via html() or view()) and a URL (via fromUrl()) were provided. PDF can only be generated from one source at a time.');
+        }
+
         try {
             $args = [
                 $this->getNodeBinaryPath(),
                 self::BINARY_PATH,
-                "--filePath={$this->tmpFiles['document']}",
                 '--margins='.json_encode($this->margins),
                 '--options='.json_encode($this->options),
             ];
+
+            if ($this->isFromUrl) {
+                $args[] = '--isFromUrl=true';
+                $args[] = "--url={$this->url}";
+            } else {
+                $args[] = "--filePath={$this->tmpFiles['document']}";
+            }
 
             if (array_key_exists('header', $this->tmpFiles)) {
                 $args[] = "--headerFilePath={$this->tmpFiles['header']}";
