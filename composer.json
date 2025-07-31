@@ -21,6 +21,7 @@
         "spatie/temporary-directory": "^2.3"
     },
     "require-dev": {
+        "laravel/facade-documenter": "dev-main",
         "laravel/pint": "^1.23.0",
         "orchestra/testbench": "^10.4",
         "pestphp/pest": "^3.8.2",
@@ -85,5 +86,11 @@
             "@build",
             "@php vendor/bin/testbench serve --ansi"
         ]
+    },
+    "repositories": {
+        "facade-documenter": {
+            "type": "vcs",
+            "url": "git@github.com:laravel/facade-documenter.git"
+        }
     }
 }

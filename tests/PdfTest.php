@@ -287,4 +287,4 @@ it('can save PDF file generated from URL', function () {
     expect($path)
         ->toBeFile()
         ->toBeReadableFile();
-})->skipOnMac();
+})->skip();
