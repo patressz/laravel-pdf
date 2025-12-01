@@ -22,13 +22,13 @@
     },
     "require-dev": {
         "laravel/facade-documenter": "dev-main",
-        "laravel/pint": "^1.23.0",
-        "orchestra/testbench": "^10.4",
-        "pestphp/pest": "^3.8.2",
-        "pestphp/pest-plugin-type-coverage": "^3.6.0",
-        "phpstan/phpstan": "^2.1.17",
-        "rector/rector": "^2.1.0",
-        "symfony/var-dumper": "^7.3.1"
+        "laravel/pint": "^1.26.0",
+        "orchestra/testbench": "^10.8",
+        "pestphp/pest": "^4.1.6",
+        "pestphp/pest-plugin-type-coverage": "^4.0.3",
+        "phpstan/phpstan": "^2.1.32",
+        "rector/rector": "^2.2.10",
+        "symfony/var-dumper": "^7.4.0"
     },
     "autoload": {
         "psr-4": {
