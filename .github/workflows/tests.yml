@@ -77,7 +77,7 @@ jobs:
         composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
 
         if [ "${{ matrix.laravel }}" = "11.*" ]; then
-            composer require "pestphp/pest:^3.0" --dev --no-interaction --no-update
+            composer require "pestphp/pest:^3.0" "pestphp/pest-plugin-type-coverage:^3.0" --dev --no-interaction --no-update
         fi
 
         composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist -W
