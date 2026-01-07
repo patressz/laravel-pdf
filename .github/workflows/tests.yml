@@ -74,7 +74,8 @@ jobs:
     - name: Install Composer dependencies
       shell: bash
       run: |
-        composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
+        composer require "illuminate/contracts:${{ matrix.laravel }}" --no-interaction --no-update
+        composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
 
         if [ "${{ matrix.laravel }}" = "11.*" ]; then
             composer require "pestphp/pest:^3.0" "pestphp/pest-plugin-type-coverage:^3.0" --dev --no-interaction --no-update
