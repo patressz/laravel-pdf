@@ -10,14 +10,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         php: [8.3, 8.4, 8.5]
-        laravel: ['11.*', '12.*']
-        testbench: ['9.*', '10.*']
+        laravel: ['12.*']
+        testbench: ['10.*']
         dependency-version: [prefer-lowest, prefer-stable]
-        exclude:
-          - laravel: '11.*'
-            testbench: '10.*' 
-          - laravel: '12.*'
-            testbench: '9.*'
 
     name: Tests P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.os }} - ${{ matrix.dependency-version }}
 
@@ -76,11 +71,6 @@ jobs:
       run: |
         composer require "illuminate/contracts:${{ matrix.laravel }}" --no-interaction --no-update
         composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
-
-        if [ "${{ matrix.laravel }}" = "11.*" ]; then
-            composer require "pestphp/pest:^3.0" "pestphp/pest-plugin-type-coverage:^3.0" --dev --no-interaction --no-update
-        fi
-
         composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist -W
 
     - name: Integration Tests

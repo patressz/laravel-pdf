@@ -26,7 +26,7 @@ A modern PHP package for generating PDFs from HTML using Playwright in Laravel a
 ## Requirements
 
 - PHP 8.3+ or 8.4+
-- Laravel 11.0+ or 12.0+
+- Laravel 12.0+
 - Node.js 18+
 - Yarn or NPM
 
